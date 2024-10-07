@@ -1,0 +1,21 @@
+---
+title: "R Notebook"
+output: html_notebook
+bibliography: bibliography/bibliography.bib
+---
+
+This is my first notebook. It will have some text and an example of code.
+
+I am currently learning from [Geocomputation in R](https://r.geocompx.org/). I can copy some exercises from there.
+
+But I will begin with a simple chunk of code that uses the built-in cars dataset.
+
+This is a plot in base R:
+```{r}
+plot(cars)
+```
+
+This is a bibliographic reference: @dumbaugh_why_2022. I will add a bibliography at the end.
+
+## References
+
