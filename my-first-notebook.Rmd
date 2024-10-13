@@ -11,11 +11,473 @@ I am currently learning from [Geocomputation in R](https://r.geocompx.org/). I c
 But I will begin with a simple chunk of code that uses the built-in cars dataset.
 
 This is a plot in base R:
+
 ```{r}
 plot(cars)
 ```
 
 This is a bibliographic reference: @dumbaugh_why_2022. I will add a bibliography at the end.
 
-## References
+I will now test various functions from [Geocomputation in R](https://r.geocompx.org/) in the box below.
 
+## Basic Map of the United States
+
+```{r}
+library(sf)
+library(terra)
+library(spData)
+library(spDataLarge)
+library(tmap)
+
+nz_elev = rast(system.file("raster/nz_elev.tif", package = "spDataLarge"))
+
+(tm_shape(us_states)) +
+  tm_borders() +
+  tm_compass()
+
+```
+
+## Map of New Orleans
+
+I will also create some examples of street maps following [Joshua McCrain's street maps in R guide](https://joshuamccrain.com/tutorials/maps/streets_tutorial.html)
+
+```{r}
+library(tidyverse)
+library(osmdata) # package for working with streets
+library(showtext) # for custom fonts
+library(ggmap)
+library(rvest)
+available_tags("highway")
+getbb("New Orleans Louisiana")
+
+big_streets <- getbb("New Orleans Louisiana")%>%
+  opq()%>%
+  add_osm_feature(key = "highway", 
+                  value = c("motorway", "primary", "motorway_link", "primary_link")) %>%
+  osmdata_sf()
+
+# Above, I tried to input "residential" as a category as well, but this resulted in a very blocky map that does not show the residential areas and street connections well. I will likely have to zoom in much closer to specific neighbourhoods in each city in order to make any observations. After this first test run, the residential category was removed from the previous line of code.
+
+big_streets
+View(big_streets[["osm_lines"]])
+
+ggplot() +
+  geom_sf(data = big_streets$osm_lines,
+          inherit.aes = FALSE,
+          color = "black")
+
+
+# Additionally, this map focuses purely on New Orleans but not the surrounding metropolitan area where many suburbs also reside. I will have to find a way to include more of the metropolitan area in the maps rather than just the inner city cores.
+```
+The first map generated has some basic major roads but needs improvements in how it is displayed and even which coordinates are used. The following map attempts to do this better.
+
+```{r}
+# Luckily, the same guide goes into how to zoom into the given map, add smaller streets, and other features.
+
+library(tidyverse)
+library(osmdata) # package for working with streets
+library(showtext) # for custom fonts
+library(ggmap)
+library(rvest)
+library(ggplot2) # added this one myself
+library(sf)
+library(gapminder) # might work for image saving?
+
+available_tags("highway")
+getbb("New Orleans Louisiana")
+
+big_streets <- getbb("New Orleans Louisiana")%>%
+  opq()%>%
+  add_osm_feature(key = "highway", 
+                  value = c("motorway", "primary", "motorway_link", "primary_link")) %>%
+  osmdata_sf()
+
+med_streets <- getbb("New Orleans Louisiana")%>%
+  opq()%>%
+  add_osm_feature(key = "highway", 
+                  value = c("secondary", "tertiary", "secondary_link", "tertiary_link")) %>%
+  osmdata_sf()
+
+
+small_streets <- getbb("New Orleans Louisiana")%>%
+  opq()%>%
+  add_osm_feature(key = "highway", 
+                  value = c("residential", "living_street",
+                            "unclassified",
+                            "service", "footway"
+                  )) %>%
+  osmdata_sf()
+
+big_streets
+View(big_streets[["osm_lines"]])
+
+# Below this will be new experimental code that follows the guide in order to better map out New Orleans.
+
+river <- getbb("New Orleans Louisiana")%>%
+  opq()%>%
+  add_osm_feature(key = "waterway", value = "river") %>%
+  osmdata_sf()
+
+bay <- getbb("New Orleans Louisiana")%>%
+  opq()%>%
+  add_osm_feature(key = "bay") %>%
+  osmdata_sf()
+
+railway <- getbb("New Orleans Louisiana")%>%
+  opq()%>%
+  add_osm_feature(key = "railway", value="rail") %>%
+  osmdata_sf()
+
+big_streets
+View(big_streets[["osm_lines"]])
+
+#The code below is copied with some modifications to test if it will run
+
+font_add_google(name = "Lato", family = "lato") # add custom fonts
+showtext_auto()
+
+ggplot() +
+  geom_sf(data = river$osm_lines,
+          inherit.aes = FALSE,
+          color = "steelblue",
+          size = 1.0,
+          alpha = .3) +
+  geom_sf(data = bay$osm_lines,
+          inherit.aes = FALSE,
+          color = "steelblue",
+          size = 1.0,
+          alpha = 0.3) +
+  geom_sf(data = railway$osm_lines,
+          inherit.aes = FALSE,
+          color = "black",
+          size = .2,
+          linetype="dotdash",
+          alpha = .5) +
+  geom_sf(data = med_streets$osm_lines,
+          inherit.aes = FALSE,
+          color = "black",
+          size = .3,
+          alpha = .5) +
+  geom_sf(data = small_streets$osm_lines,
+          inherit.aes = FALSE,
+          color = "#666666",
+          size = .2,
+          alpha = .3) +
+  geom_sf(data = big_streets$osm_lines,
+          inherit.aes = FALSE,
+          color = "black",
+          size = .5,
+          alpha = .6) +
+  coord_sf(xlim = c(-90.14, -89.85), 
+           ylim = c(29.85, 30.00),
+           expand = FALSE) +
+  theme_void() + # get rid of background color, grid lines, etc.
+  theme(plot.title = element_text(size = 20, family = "lato", face="bold", hjust=.5),
+        plot.subtitle = element_text(family = "lato", size = 8, hjust=.5, margin=margin(2, 0, 5, 0))) +
+  labs(title = "NEW ORLEANS", subtitle = "29.95°N / 90.08°W")
+
+#The coordinates were inputed from the ones generated for New Orleans earlier but modified to better show the parts of the city I wanted. The bay feature is one I added myself as well.
+
+# Extra notes for later:
+# - Inputting "New Orleans Louisiana" restricts it only to the one city, no other cities/areas in the metropolitan area are included on the map.
+# BUT, trying to generate all of the data for Louisiana to then narrow down into that map takes ages to complete run and therefore, is not a practical option for this thesis which involves generating potentially dozens of metropolitan areas.
+# Will look for an alternative solution that would work in these lines of codes and packages.For now, this test map looks at just New Orleans.
+# Also could not get the bay to show up on the map. Not sure at this point in time why.
+```
+A better quality version of this map can be seen under the [New Orleans pdf](neworleanstest.pdf)
+
+## Map of College Street and Spadina Avenue (Toronto)
+
+Here is an attempt to map an intersection I am more familiar with in terms of layout in order to see how accurate I can get the map to be. This map includes arterial roads, smaller streets, some public transit lines, and various building types; but is notably incomplete as mentioned afterwards.
+
+```{r}
+library(tidyverse)
+library(osmdata) # package for working with streets
+library(showtext) # for custom fonts
+library(ggmap)
+library(rvest)
+library(ggplot2) # added this one myself
+library(sf)
+library(gapminder) # might work for image saving?
+
+available_tags("highway") # https://wiki.openstreetmap.org/wiki/Map_features has different features you can add such as "landuse"
+available_tags("landuse")
+# some that came up include: residential, reacreation_ground, industrial, institutional, education, commercial, conservation
+available_tags("leisure")
+# adult_gaming_centre, amusement_arcade, common, dance, dog_park, escape_game, fitness_centre, fitness_station, garden, hackerspace, miniature_golf, nature_reserve, park, picnic_table, pitch, playground, sports_centre, stadium, summer_camp, swimming_area, swimmin_pool, track, water_park, etc (some are less relevant to cities))
+available_tags("building")
+# apartments, bungalow, bridge, church, commercial, college, dormitory, fire_station, garage, hospital, government, hotel, house, industrial, kindergarten, mosque, museum, office, parking, semidetached_house, retail, religious (instead of church or mosque? etc.), school, service, sports_centre, sports_hall, supermarket, toilets, university, train_station, etc.
+available_tags("public_transport")
+# platform, station, stop_area, stop_area_group, stop_position (?)
+available_tags("railway")
+# crossing, level_crossing, light_rail, monorail, rail, railway_crossing, station, stop, subway, subway_entrance, tram, tram_level_crossing, tram_stop
+
+```
+```{r}
+library(tidyverse)
+library(osmdata) # package for working with streets
+library(showtext) # for custom fonts
+library(ggmap)
+library(rvest)
+library(ggplot2) # I added this one myself in case it's necessary to run the code.
+library(sf)
+library(gapminder) # Might work for image saving?l
+
+getbb("Toronto Ontario")
+
+big_streets <- getbb("Toronto Ontario")%>%
+  opq()%>%
+  add_osm_feature(key = "highway", 
+                  value = c("motorway", "primary", "motorway_link", "primary_link")) %>%
+  osmdata_sf()
+
+med_streets <- getbb("Toronto Ontario")%>%
+  opq()%>%
+  add_osm_feature(key = "highway", 
+                  value = c("secondary", "tertiary", "secondary_link", "tertiary_link")) %>%
+  osmdata_sf()
+
+
+small_streets <- getbb("Toronto Ontario")%>%
+  opq()%>%
+  add_osm_feature(key = "highway", 
+                  value = c("residential", "living_street",
+                            "unclassified",
+                            "service", "footway"
+                  )) %>%
+  osmdata_sf()
+
+railway <- getbb("Toronto Ontario")%>%
+  opq()%>%
+  add_osm_feature(key = "railway", 
+                   value = ("rail")) %>%
+  osmdata_sf()
+
+detached <- getbb("Toronto Ontario")%>%
+  opq()%>%
+  add_osm_feature(key = "building", 
+                  value = "house") %>%
+  osmdata_sf()
+
+semidetached <- getbb("Toronto Ontario")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value =  "semidetached_house") %>%
+  osmdata_sf()
+
+apartments <- getbb("Toronto Ontario")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value = "apartment") %>%
+  osmdata_sf()
+
+collegeuniversity <- getbb("Toronto Ontario")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value = c("college", "university", "dormitory")) %>%
+  osmdata_sf()
+
+schools <- getbb("Toronto Ontario")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value = c("school", "kindergarten"))%>%
+  osmdata_sf()
+
+stores <- getbb("Toronto Ontario")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value = "retail")%>%
+  osmdata_sf()
+
+supermarkets <- getbb("Toronto Ontario")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value = "supermarket")%>%
+  osmdata_sf()
+
+industrial <- getbb("Toronto Ontario")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value = "industrial")%>%
+  osmdata_sf()
+
+sports <- getbb("Toronto Ontario")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value = c("sports_centre", "sports_hall"))%>%
+  osmdata_sf()
+  
+healthcare <- getbb("Toronto Ontario")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value = "hospital")%>%
+  osmdata_sf()
+
+religious <- getbb("Toronto Ontario")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value = "religious")%>%
+  osmdata_sf()
+
+train_station <- getbb("Toronto Ontario")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value = "train_station")%>%
+  osmdata_sf()
+
+subway_entrance <- getbb("Toronto Ontario")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value = "subway_entrance")%>%
+  osmdata_sf()
+
+subwayline <- getbb("Toronto Ontario")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value = "subway")%>%
+  osmdata_sf()
+
+lrttrams <- getbb("Toronto Ontario")%>%
+  opq()%>%
+  add_osm_feature(key = "railway", 
+                   value = c("light_rail", "tram")) %>%
+  osmdata_sf()
+
+tram_stops <- getbb("Toronto Ontario")%>%
+  opq()%>%
+  add_osm_feature(key = "railway", value = "tram_stop") %>%
+  osmdata_sf()
+
+font_add_google(name = "Lato", family = "lato") # add custom fonts
+showtext_auto()
+
+ggplot() +
+  geom_sf(data = railway$osm_lines,
+          inherit.aes = FALSE,
+          color = "black",
+          size = .1,
+          linetype= "21",
+          alpha = .6) +
+  geom_sf(data = med_streets$osm_lines,
+          inherit.aes = FALSE,
+          color = "black",
+          size = .3,
+          alpha = .9) +
+  geom_sf(data = small_streets$osm_lines,
+          inherit.aes = FALSE,
+          color = "#666666",
+          size = .2,
+          alpha = .9) +
+  geom_sf(data = big_streets$osm_lines,
+          inherit.aes = FALSE,
+          color = "black",
+          size = .5,
+          alpha = .9) +
+  geom_sf(data = detached$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "darkgreen",
+          size = 0.5,
+          alpha = 1) +
+  geom_sf(data = semidetached$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#4bbf54",
+          size = 0.5,
+          alpha = 1) +
+    geom_sf(data = apartments$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#a1eda7",
+          size = 0.5,
+          alpha = 1) +
+  geom_sf(data = collegeuniversity$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#72b8db",
+          size = 0.5,
+          alpha = 1) +
+  geom_sf(data = schools$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#276e91",
+          size = 0.5,
+          alpha = 1) +
+  geom_sf(data = stores$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#d7d96a",
+          size = 0.5,
+          alpha = 1) +
+  geom_sf(data = supermarkets$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#fbff19",
+          size = 0.5,
+          alpha = 1) +
+  geom_sf(data = industrial$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#572a17",
+          size = 0.5,
+          alpha = 1) +
+  geom_sf(data = sports$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#d48713",
+          size = 0.5,
+          alpha = 1) +
+  geom_sf(data = healthcare$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#d42d13",
+          size = 0.5,
+          alpha = 1) +
+  geom_sf(data = religious$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#6a5d99",
+          size = 0.5,
+          alpha = 1) +
+  geom_sf(data = tram_stops$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#5c5c5c",
+          size = 0.5,
+          alpha = 1) +
+  geom_sf(data = lrttrams$osm_lines,
+          inherit.aes = FALSE,
+          color = "#5c5c5c",
+          size = .1,
+          linetype= "21",
+          alpha = .6) +
+  geom_sf(data = subway_entrance$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#292536",
+          size = 0.5,
+          alpha = 1) +
+  geom_sf(data = subwayline$osm_lines,
+          inherit.aes = FALSE,
+          color = "#292536",
+          size = .1,
+          linetype= "21",
+          alpha = .6) +
+  coord_sf(xlim = c(-79.42, -79.38), 
+           ylim = c(43.645, 43.665),
+           expand = FALSE) +
+  theme_void() + # get rid of background color, grid lines, etc.
+  theme(plot.title = element_text(size = 20, family = "lato", face="bold", hjust=.5),
+        panel.border = element_rect(color = "black", fill = NA, size = 2),
+        plot.subtitle = element_text(family = "lato", size = 10, hjust=.5, margin=margin(2, 0, 5, 0))) +
+  labs(title = "College Street & Spadina Avenue", subtitle = "43.65°N / 79.40°W")
+# ggsave("collegeandspadina.pdf", dpi = 400, width = 7, height = 5, units = "in")
+```
+I was able to include a variety of building types in the previous neighbourhood map. The legend is as follows:
+- Dark green: detached housing
+- Green: semi-detached housing
+- Light green: apartment buildings
+- Light blue: institutional/university/college buildings
+- Blue: schools and daycares
+- Yellow: retail areas
+- Bright yellow: supermarkets (do not appear on this map)
+- Purple: religious buildings (do not appear on this map)
+- Red: hospitals (there was no option to include other medical facilities)
+- Brown: industrial buildings
+- Streetcar lines and subway lines
+
+However, a few evident issues arise.
+1. A lot of housing buildings do not appear. [OpenStreetMap](openstreetmap.org) recognizes many of them as buildings in residential zones, but not as residential buildings. I will have to check if this is as common of a problem in American cities as well though.
+2. Some building types do not have their own categories (medical facilities, grocery stores, etc.) from what I can tell at this point in time.
+3. Some buildings have several uses (e.g. mixed residential and retail) that I do not believe can be represented as such.
+4. The image is very pixelated unless you open it as a .pdf file where the details are rendered in greater quality. The [College and Spadina PDF](collegeandspadina.pdf) shows this detail.
+
+
+## References
