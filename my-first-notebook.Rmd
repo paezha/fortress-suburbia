@@ -479,5 +479,484 @@ However, a few evident issues arise.
 3. Some buildings have several uses (e.g. mixed residential and retail) that I do not believe can be represented as such.
 4. The image is very pixelated unless you open it as a .pdf file where the details are rendered in greater quality. The [College and Spadina PDF](collegeandspadina.pdf) shows this detail.
 
+## Map of Oak Park, Chicago
+
+This map will test if buildings are better classified as residential buildings in a major US city (that is also part of one of the metropolitan areas that will likely be used in this study).
+
+```{r}
+# most of this code is copied from the previous map but modified to be used for a different neighbourhood
+
+library(tidyverse)
+library(osmdata)
+library(showtext)
+library(ggmap)
+library(rvest)
+library(ggplot2)
+library(sf)
+library(gapminder)
+
+getbb("Chicago Illinois")
+
+big_streets <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "highway", 
+                  value = c("motorway", "primary", "motorway_link", "primary_link")) %>%
+  osmdata_sf()
+
+med_streets <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "highway", 
+                  value = c("secondary", "tertiary", "secondary_link", "tertiary_link")) %>%
+  osmdata_sf()
+
+small_streets <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "highway", 
+                  value = c("residential", "living_street",
+                            "unclassified",
+                            "service", "footway")) %>%
+  osmdata_sf()
+
+railway <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "railway", 
+                   value = ("rail")) %>%
+  osmdata_sf()
+
+detached <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "building", 
+                  value = "house") %>%
+  osmdata_sf()
+
+semidetached <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value =  "semidetached_house") %>%
+  osmdata_sf()
+
+apartments <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value = "apartment") %>%
+  osmdata_sf()
+
+collegeuniversity <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value = c("college", "university", "dormitory")) %>%
+  osmdata_sf()
+
+schools <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value = c("school", "kindergarten"))%>%
+  osmdata_sf()
+
+stores <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value = "retail")%>%
+  osmdata_sf()
+
+supermarkets <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value = "supermarket")%>%
+  osmdata_sf()
+
+industrial <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value = "industrial")%>%
+  osmdata_sf()
+
+sports <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value = c("sports_centre", "sports_hall"))%>%
+  osmdata_sf()
+  
+healthcare <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value = "hospital")%>%
+  osmdata_sf()
+
+religious <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value = "religious")%>%
+  osmdata_sf()
+
+train_station <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value = "train_station")%>%
+  osmdata_sf()
+
+subway_entrance <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value = "subway_entrance")%>%
+  osmdata_sf()
+
+subwayline <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value = "subway")%>%
+  osmdata_sf()
+
+lrttrams <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "railway", 
+                   value = c("light_rail", "tram")) %>%
+  osmdata_sf()
+
+tram_stops <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "railway", value = "tram_stop") %>%
+  osmdata_sf()
+
+font_add_google(name = "Lato", family = "lato") # add custom fonts
+showtext_auto()
+
+ggplot() +
+  geom_sf(data = railway$osm_lines,
+          inherit.aes = FALSE,
+          color = "black",
+          size = .1,
+          linetype= "21",
+          alpha = .6) +
+  geom_sf(data = med_streets$osm_lines,
+          inherit.aes = FALSE,
+          color = "black",
+          size = .3,
+          alpha = .9) +
+  geom_sf(data = small_streets$osm_lines,
+          inherit.aes = FALSE,
+          color = "#666666",
+          size = .2,
+          alpha = .9) +
+  geom_sf(data = big_streets$osm_lines,
+          inherit.aes = FALSE,
+          color = "black",
+          size = .5,
+          alpha = .9) +
+  geom_sf(data = detached$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "darkgreen",
+          size = 0.5,
+          alpha = 1) +
+  geom_sf(data = semidetached$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#4bbf54",
+          size = 0.5,
+          alpha = 1) +
+    geom_sf(data = apartments$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#a1eda7",
+          size = 0.5,
+          alpha = 1) +
+  geom_sf(data = collegeuniversity$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#72b8db",
+          size = 0.5,
+          alpha = 1) +
+  geom_sf(data = schools$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#276e91",
+          size = 0.5,
+          alpha = 1) +
+  geom_sf(data = stores$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#d7d96a",
+          size = 0.5,
+          alpha = 1) +
+  geom_sf(data = supermarkets$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#fbff19",
+          size = 0.5,
+          alpha = 1) +
+  geom_sf(data = industrial$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#572a17",
+          size = 0.5,
+          alpha = 1) +
+  geom_sf(data = sports$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#d48713",
+          size = 0.5,
+          alpha = 1) +
+  geom_sf(data = healthcare$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#d42d13",
+          size = 0.5,
+          alpha = 1) +
+  geom_sf(data = religious$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#6a5d99",
+          size = 0.5,
+          alpha = 1) +
+  geom_sf(data = tram_stops$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#5c5c5c",
+          size = 0.5,
+          alpha = 1) +
+  geom_sf(data = lrttrams$osm_lines,
+          inherit.aes = FALSE,
+          color = "#5c5c5c",
+          size = .1,
+          linetype= "21",
+          alpha = .6) +
+  geom_sf(data = subway_entrance$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#292536",
+          size = 0.5,
+          alpha = 1) +
+  geom_sf(data = subwayline$osm_lines,
+          inherit.aes = FALSE,
+          color = "#292536",
+          size = .1,
+          linetype= "21",
+          alpha = .6) +
+  coord_sf(xlim = c(-87.80, -87.76), 
+           ylim = c(41.875, 41.895),
+           expand = FALSE) +
+  theme_void() + # get rid of background color, grid lines, etc.
+  theme(plot.title = element_text(size = 20, family = "lato", face="bold", hjust=.5),
+        panel.border = element_rect(color = "black", fill = NA, size = 2),
+        plot.subtitle = element_text(family = "lato", size = 10, hjust=.5, margin=margin(2, 0, 5, 0))) +
+  labs(title = "Oak Park, Chicago", subtitle = "41.88°N / 87.78°W")
+# ggsave("oakparkchicago.pdf", dpi = 400, width = 7, height = 5, units = "in")
+```
+
+The [Oak Park map](oakparkchicago.pdf) contains even fewer labelled buildings than the College and Spadina map. An alternative solution to this problem will be to focus on mapping different zones rather than building types specifically. Here is another attempt at recreating this neighbourhood's map but with zone labels instead:
+
+```{r}
+library(osmdata)
+library(showtext)
+library(ggmap)
+library(rvest)
+library(ggplot2)
+library(sf)
+library(gapminder)
+
+getbb("Chicago Illinois")
+
+big_streets <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "highway", 
+                  value = c("motorway", "primary", "motorway_link", "primary_link")) %>%
+  osmdata_sf()
+
+med_streets <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "highway", 
+                  value = c("secondary", "tertiary", "secondary_link", "tertiary_link")) %>%
+  osmdata_sf()
+
+small_streets <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "highway", 
+                  value = c("residential", "living_street",
+                            "unclassified",
+                            "service", "footway")) %>%
+  osmdata_sf()
+
+railway <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "railway", value = ("rail")) %>%
+  osmdata_sf()
+
+residentialzones <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "landuse", value = "residential") %>%
+  osmdata_sf()
+
+institutionalzones <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "landuse", value = "institutional") %>%
+  osmdata_sf()
+
+schoolzones <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "landuse", value = "education")%>%
+  osmdata_sf()
+
+commercialzones <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "landuse", value = "commercial")%>%
+  osmdata_sf()
+
+industrialzones <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "landuse", value = "industrial")%>%
+  osmdata_sf()
+
+recreationalzones <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "landuse", value = "reacreation_ground")%>%
+  osmdata_sf()
+  
+healthcare <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value = "hospital")%>%
+  osmdata_sf()
+# there was no landuse option for healthcare, so I kept the hospital buildings but this still likely does not include medical clinics
+
+parks <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "leisure", value = c("park", "garden")) %>%
+  osmdata_sf()
+
+religiouszones <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "landuse", value = "religious")%>%
+  osmdata_sf()
+
+train_station <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value = "train_station")%>%
+  osmdata_sf()
+
+subway_entrance <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value = "subway_entrance")%>%
+  osmdata_sf()
+
+subwayline <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "building", value = "subway")%>%
+  osmdata_sf()
+
+lrttrams <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "railway", 
+                   value = c("light_rail", "tram")) %>%
+  osmdata_sf()
+
+tram_stops <- getbb("Chicago Illinois")%>%
+  opq()%>%
+  add_osm_feature(key = "railway", value = "tram_stop") %>%
+  osmdata_sf()
+
+font_add_google(name = "Lato", family = "lato") # add custom fonts
+showtext_auto()
+
+ggplot() +
+  geom_sf(data = railway$osm_lines,
+          inherit.aes = FALSE,
+          color = "black",
+          size = .1,
+          linetype= "21",
+          alpha = .6) +
+  geom_sf(data = med_streets$osm_lines,
+          inherit.aes = FALSE,
+          color = "black",
+          size = .3,
+          alpha = .9) +
+  geom_sf(data = small_streets$osm_lines,
+          inherit.aes = FALSE,
+          color = "#666666",
+          size = .2,
+          alpha = .9) +
+  geom_sf(data = big_streets$osm_lines,
+          inherit.aes = FALSE,
+          color = "black",
+          size = .5,
+          alpha = .9) +
+  geom_sf(data = residentialzones$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#2b7d19",
+          size = 0.5,
+          alpha = 0.5) +
+  geom_sf(data = parks$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#a1eda7",
+          size = 0.5,
+          alpha = 0.5) +
+  geom_sf(data = institutionalzones$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#72b8db",
+          size = 0.5,
+          alpha = 0.5) +
+  geom_sf(data = schoolzones$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#276e91",
+          size = 0.5,
+          alpha = 0.5) +
+  geom_sf(data = commercialzones$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#d7d96a",
+          size = 0.5,
+          alpha = 0.5) +
+  geom_sf(data = industrialzones$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#572a17",
+          size = 0.5,
+          alpha = 0.5) +
+  geom_sf(data = recreationalzones$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#d48713",
+          size = 0.5,
+          alpha = 0.5) +
+  geom_sf(data = healthcare$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#d42d13",
+          size = 0.5,
+          alpha = 0.5) +
+  geom_sf(data = religiouszones$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#6a5d99",
+          size = 0.5,
+          alpha = 0.5) +
+  geom_sf(data = tram_stops$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#5c5c5c",
+          size = 0.5,
+          alpha = 1) +
+  geom_sf(data = lrttrams$osm_lines,
+          inherit.aes = FALSE,
+          color = "#5c5c5c",
+          size = .1,
+          linetype= "21",
+          alpha = .6) +
+  geom_sf(data = subway_entrance$osm_polygons,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#292536",
+          size = 0.5,
+          alpha = 1) +
+  geom_sf(data = subwayline$osm_lines,
+          inherit.aes = FALSE,
+          color = "#292536",
+          size = .1,
+          linetype= "21",
+          alpha = .6) +
+  coord_sf(xlim = c(-87.80, -87.76), 
+           ylim = c(41.875, 41.895),
+           expand = FALSE) +
+  theme_void() + # get rid of background color, grid lines, etc.
+  theme(plot.title = element_text(size = 20, family = "lato", face="bold", hjust=.5),
+        # legend = (legend.position = ("topright") + legend = c("Residential Zones", "Parks", "Schools", "Institutions", "Retail Zones", "Recreational Zones", "Hospitals", "Religious Buildings") + col = c("#2b7d19", "#a1eda7", "#276e91", "#72b8db", "#d7d96a", "#d48713", "#d42d13", "#6a5d99")),
+        # tried to add the legend in but it would not work, not sure why
+        panel.border = element_rect(color = "black", fill = NA, size = 2),
+        plot.subtitle = element_text(family = "lato", size = 10, hjust=.5, margin=margin(2, 0, 5, 0))) +
+  labs(title = "Oak Park, Chicago", subtitle = "41.88°N / 87.78°W")
+# ggsave("oakparkchicagozones.pdf", dpi = 400, width = 7, height = 5, units = "in")
+```
+
+Although the [Oak Park, Chicago map with zones](oakparkchicagozones.pdf) better outlines zone uses (including residential zones, parks, etc.), there are still some spots (especially in retail spaces) that are not shown on the map.
 
 ## References
