@@ -6,28 +6,26 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of fortress-suburbia is to …
+The Fortress Suburbia GitHub project represents all of my work towards
+an undergraduate thesis part of the LIFESCI 4C12 course at McMaster
+University.
 
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
+The goal of the thesis is to examine how street patterns were carefully
+designed in American suburbia following the Second World War, especially
+with regards to racial segregation through physical community design.
 
-``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
-```
+This GitHub project includes files that are part of my final work, such
+as the `Introduction and Liteature Review.Rmd`, but also work that
+represents my learning process. These files, such as
+`my-first-notebook.Rmd`, show my progress in learning skills to use in
+this thesis project, such as collecting data for mapping cities and
+neighbourhoods, as seen in the `plots` folder.
 
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date.
+The thesis project is expected to be completed in April 2025. In the
+meantime, however, you can view all the current files for this project
+on GitHub, as well as the edit history in the Commit Log.
 
-You can also embed plots, for example:
+Thank you for your interest in my project and I hope it teaches you
+something new!
 
-![](README_files/figure-gfm/pressure-1.png)<!-- -->
-
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub.
+Amanda
