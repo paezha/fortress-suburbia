@@ -9,17 +9,33 @@ subject: "LIFESCI 4C12"
 abstract: "This paper reports our analysis of opioid prescriptions in Kentucky, USA, and its relationship with income and education at the level of counties. Data were obtained from the Washington Post database and the US Census."
 keywords: "opioids, education, income, spatial analysis"
 date: "4/6/2020"
-output:
+output: 
   pdf_document:
-    # The project-template-default.tex file was minimally adapted from Steven V. Miller's template for academic manuscripts. See:
-    # http://svmiller.com/blog/2016/02/svm-r-markdown-manuscript/
-    # https://github.com/svmiller/svm-r-markdown-templates/blob/master/svm-latex-ms.tex
-    template: project-template-default.tex
-bibliography: bibliography/bibliography.bib
+    citation_package: natbib
+    keep_tex: true
+    fig_caption: true
+    latex_engine: pdflatex
+    template: project-template.tex #svm-latex-ms.tex
+bibliography:
+  - "`r system('kpsewhich ../bibliography/references.bib', intern=TRUE)`"
+header-includes:
+  - \usepackage{hyperref}
+  - \usepackage{array}   
+  - \usepackage{caption}
+  - \usepackage{graphicx}
+  - \usepackage{siunitx}
+  - \usepackage[table]{xcolor}
+  - \usepackage{multirow}
+  - \usepackage{hhline}
+  - \usepackage{calc}
+  - \usepackage{tabularx}
+  - \usepackage{fontawesome}
+  - \usepackage[para,online,flushleft]{threeparttable}
+#bibliography: references.bib
 always_allow_html: true
 ---
 
-## Introduction
+# Introduction
 
 Suburban neighbourhoods, “suburbs” for short, refer to areas that are almost exclusively zoned for low-density housing (@airgood-obrycki). For many, these single-family homes were a premium housing available following the second World War to accommodate returning veterans and the consequent Baby Boom population (@nicolaides2017). The large population increases throughout the United States meant many people wanted to live further away from a now very clustered city center, especially in suburbs that provided more space and “freedom” for inhabitants (@nicolaides2017). For many, the image of suburbs centered around the white middle class, who were the primary residents of these spaces throughout the Fordist Era (@florida1988), a postwar period characterized by rapidly increasing automobile usage and suburban sprawl (expanding suburban neighbourhoods).
 
@@ -27,7 +43,7 @@ In the 21st century, many white Americans still reside in white-majority suburba
 
 Our study will examine how suburbs, in terms of street patterns and features, made mobility in American suburbia low. Additionally, we will examine how this process was intentionally done to segregate.
 
-## Literature Review
+# Literature Review
 
 An important aspect of the built suburban environment are the various street patterns present. There are various ways to classify the street patterns, and many different variations are present throughout the United States. For instance, @canadamortgageandhousingcorporation2002 found three main street plans in North American suburbia: the conventional loop and cul-de-sac, traditional grid, and residential quadrant. The residential quadrant is best described as an open grid street system, with high accessibility in and out of the community. On the other hand, the conventional loop and cul-de-sac designs feature curved roads and many dead end streets within the neighbourhood. This makes access from outside the community more difficult, especially without a car. The design for such winding sidewalks and streets originate from John Nash and Humphery Repton’s designs for some of the first “urban villages”, which featured low-density cottages and a “rural style of living” on the outskirts of a city (@southworth2003). The design became increasingly popular and eventually superseded the grid street design (but not entirely) which was more convenient for railroad connections and meeting the housing demands of early 20th century America (@southworth1993).
 
@@ -45,5 +61,5 @@ Racial segregation is known to have dire effects on black Americans’ mental an
 
 On the other hand, there are still many communities that are amalgamated. Compact, high-density developments have better accessibility into the neighbourhood using various modes of transit. Additionally, various housing types, including affordable housing, being available increases the range of people who can afford to live in the area (@blanch2023). Walking and having accessible third places are a major factor in sociability as well, and through sociability, more integration rather than segregation could be achieved (@canadamortgageandhousingcorporation2002). The issue lies with American suburbs that have low public transit and walkable access, isolating them from the outside world and other people. To achieve the more integrated communities, several changes can be made. In terms of street connectivity, having more link-to-nodes (road to intersection connections) leads to a decrease in driving (@marshall2010), as seen in gridiron street patterns due to the shorter roads (less convenient to drive) and increased potential for mobility by walking. Certain street patterns such as the grid street network has an above average connectivity and density, resulting in more walking and biking within but also out of the neighbourhood (@marshall2010). A crucial aspect is to maintain these street connections throughout the entire city, not just individual neighbourhoods, which is crucial for more active transport usage. While cars are not the main culprit of segregation issues in the United States, they perpetuate physical design choices in the form of street patterns, which in turn segregates communities and especially shields white people from other racial groups. Including mixed-use designs in communities by adding amenities such as grocery stores and medical centers would increase the utility of the given neighbourhood, encouraging people to visit and live there for various different needs.
 
-## References
+# References
 

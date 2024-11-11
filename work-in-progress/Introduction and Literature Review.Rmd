@@ -4,7 +4,7 @@ output:
   html_document:
     df_print: paged
 bibliography:
-  - "`r system('kpsewhich ../bibliography/bibliography.bib', intern=TRUE)`"
+  - "`r system('kpsewhich ../bibliography/references.bib', intern=TRUE)`"
 ---
 
 ```{r load-packages}
