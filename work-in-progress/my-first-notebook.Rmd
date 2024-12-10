@@ -8,16 +8,6 @@ This is my first notebook. It will have some text and an example of code.
 
 I am currently learning from [Geocomputation in R](https://r.geocompx.org/). I can copy some exercises from there.
 
-But I will begin with a simple chunk of code that uses the built-in cars dataset.
-
-This is a plot in base R:
-
-```{r}
-plot(cars)
-```
-
-This is a bibliographic reference: @dumbaugh_why_2022. I will add a bibliography at the end.
-
 I will now test various functions from [Geocomputation in R](https://r.geocompx.org/) in the box below.
 
 ## Example of saving data to data folder
@@ -64,7 +54,6 @@ library(ggplot2) # added this one myself
 library(sf)
 library(gapminder) # might work for image saving?
 
-
 ```
 
 ```{r}
@@ -80,7 +69,7 @@ nz_elev = rast(system.file("raster/nz_elev.tif", package = "spDataLarge"))
 
 I will also create some examples of street maps following [Joshua McCrain's street maps in R guide](https://joshuamccrain.com/tutorials/maps/streets_tutorial.html)
 
-```{r}
+```{r New Orleans tags, echo=FALSE}
 available_tags("highway")
 getbb("New Orleans Louisiana")
 
@@ -92,7 +81,7 @@ big_streets <- getbb("New Orleans Louisiana")%>%
 ```
 
 Above, I tried to input "residential" as a category as well, but this resulted in a very blocky map that does not show the residential areas and street connections well. I will likely have to zoom in much closer to specific neighbourhoods in each city in order to make any observations. After this first test run, the residential category was removed from the previous line of code.
-````{r}
+```{r}
 big_streets
 View(big_streets[["osm_lines"]])
 

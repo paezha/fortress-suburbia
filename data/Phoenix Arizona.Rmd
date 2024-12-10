@@ -1,0 +1,89 @@
+---
+title: "Phoenix Arizona"
+output: html_notebook
+---
+
+This will be all the work for the Phoenix, Arizona data (one of the 5 selected cities used as part of this thesis work).
+
+```{r}
+library(ggmap)
+library(glue)
+library(here)
+library(osmdata) # package for working with streets
+library(sf)
+library(showtext) # for custom fonts
+library(spData)
+library(spDataLarge)
+library(terra)
+library(tidyverse)
+library(tmap)
+library(rvest)
+library(tidyverse)
+library(osmdata) # package for working with streets
+library(showtext) # for custom fonts
+library(ggmap)
+library(rvest)
+library(ggplot2) # added this one myself
+library(sf)
+library(gapminder) # might work for image saving?
+library (igraph)
+library (ggraph)
+library (h3r)
+```
+
+```{r}
+getbb("Phoenix Arizona")
+available_tags("highway")
+
+big_streets <- getbb("Phoenix Arizona")%>%
+  opq()%>%
+  add_osm_feature(key = "highway", 
+                  value = c("motorway", "primary", "motorway_link", "primary_link")) %>%
+  osmdata_sf()
+
+med_streets <- getbb("Phoenix Arizona")%>%
+  opq()%>%
+  add_osm_feature(key = "highway", 
+                  value = c("secondary", "tertiary", "secondary_link", "tertiary_link")) %>%
+  osmdata_sf()
+
+
+small_streets <- getbb("Phoenix Arizona")%>%
+  opq()%>%
+  add_osm_feature(key = "highway", 
+                  value = c("residential", "living_street",
+                            "unclassified",
+                            "service", "footway")) %>%
+  osmdata_sf()
+
+phoenixarizonadata <- bind_rows(big_streets$osm_lines, med_streets$osm_lines, small_streets$osm_lines)
+
+save(phoenixarizonadata, 
+     file = glue::glue(here::here(), "/data-raw/phoenixarizonadata.rda"), 
+     compress = "xz")
+```
+Determining Urban vs Suburban Areas Using Geohashes:
+
+```{r}
+getbb("Phoenix Arizona")
+getPentagons("6") #h3r package
+
+phoenix_boundaries <- getbb("Phoenix Arizona")%>%
+  opq()%>%
+  add_osm_feature(key = "boundary", 
+                  value = c("statistical")) %>%
+  osmdata_sf()
+
+
+geohashes <- h3r::_(phoenix_boundaries, res = 6)
+  
+  # if statistical does not work, try census
+
+
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
