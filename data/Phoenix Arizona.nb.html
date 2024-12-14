@@ -1756,156 +1756,50 @@ display: none;
 selected cities used as part of this thesis work).</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShnZ21hcClcbmBgYCJ9 -->
-<pre class="r"><code>library(ggmap)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBnZ3Bsb3QyXG4ifQ== -->
-<pre><code>Loading required package: ggplot2</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoi4oS5IEdvb2dsZSdzIFRlcm1zIG9mIFNlcnZpY2U6IFx1MDAxYl04OztodHRwczovL21hcHNwbGF0Zm9ybS5nb29nbGUuY29tXHUwMDA3PGh0dHBzOi8vbWFwc3BsYXRmb3JtLmdvb2dsZS5jb20+XHUwMDFiXTg7O1x1MDAwN1xuICBTdGFkaWEgTWFwcycgVGVybXMgb2YgU2VydmljZTogXHUwMDFiXTg7O2h0dHBzOi8vc3RhZGlhbWFwcy5jb20vdGVybXMtb2Ytc2VydmljZS9cdTAwMDc8aHR0cHM6Ly9zdGFkaWFtYXBzLmNvbS90ZXJtcy1vZi1zZXJ2aWNlLz5cdTAwMWJdODs7XHUwMDA3XG4gIE9wZW5TdHJlZXRNYXAncyBUaWxlIFVzYWdlIFBvbGljeTogXHUwMDFiXTg7O2h0dHBzOi8vb3BlcmF0aW9ucy5vc21mb3VuZGF0aW9uLm9yZy9wb2xpY2llcy90aWxlcy9cdTAwMDc8aHR0cHM6Ly9vcGVyYXRpb25zLm9zbWZvdW5kYXRpb24ub3JnL3BvbGljaWVzL3RpbGVzLz5cdTAwMWJdODs7XHUwMDA3XG7ihLkgUGxlYXNlIGNpdGUgZ2dtYXAgaWYgeW91IHVzZSBpdCEgVXNlIGBjaXRhdGlvbihcImdnbWFwXCIpYCBmb3IgZGV0YWlscy5cbiJ9 -->
-<pre><code>ℹ Google&#39;s Terms of Service: ]8;;https://mapsplatform.google.com&lt;https://mapsplatform.google.com&gt;]8;;
-  Stadia Maps&#39; Terms of Service: ]8;;https://stadiamaps.com/terms-of-service/&lt;https://stadiamaps.com/terms-of-service/&gt;]8;;
-  OpenStreetMap&#39;s Tile Usage Policy: ]8;;https://operations.osmfoundation.org/policies/tiles/&lt;https://operations.osmfoundation.org/policies/tiles/&gt;]8;;
-ℹ Please cite ggmap if you use it! Use `citation(&quot;ggmap&quot;)` for details.</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShnbHVlKVxubGlicmFyeShoZXJlKVxuYGBgIn0= -->
-<pre class="r"><code>library(glue)
-library(here)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiaGVyZSgpIHN0YXJ0cyBhdCBDOi9Vc2Vycy9hbWFuZC9Eb2N1bWVudHMvTWNNYXN0ZXIvVGhlc2lzL2ZvcnRyZXNzLXN1YnVyYmlhXG4ifQ== -->
-<pre><code>here() starts at C:/Users/amand/Documents/McMaster/Thesis/fortress-suburbia</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShvc21kYXRhKSAjIHBhY2thZ2UgZm9yIHdvcmtpbmcgd2l0aCBzdHJlZXRzXG5gYGAifQ== -->
-<pre class="r"><code>library(osmdata) # package for working with streets</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiRGF0YSAoYykgT3BlblN0cmVldE1hcCBjb250cmlidXRvcnMsIE9EYkwgMS4wLiBodHRwczovL3d3dy5vcGVuc3RyZWV0bWFwLm9yZy9jb3B5cmlnaHRcbiJ9 -->
-<pre><code>Data (c) OpenStreetMap contributors, ODbL 1.0. https://www.openstreetmap.org/copyright</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShzZilcbmBgYCJ9 -->
-<pre class="r"><code>library(sf)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiTGlua2luZyB0byBHRU9TIDMuMTIuMSwgR0RBTCAzLjguNCwgUFJPSiA5LjMuMTsgc2ZfdXNlX3MyKCkgaXMgVFJVRVxuIn0= -->
-<pre><code>Linking to GEOS 3.12.1, GDAL 3.8.4, PROJ 9.3.1; sf_use_s2() is TRUE</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShzaG93dGV4dCkgIyBmb3IgY3VzdG9tIGZvbnRzXG5gYGAifQ== -->
-<pre class="r"><code>library(showtext) # for custom fonts</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBzeXNmb250c1xuTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBzaG93dGV4dGRiXG4ifQ== -->
-<pre><code>Loading required package: sysfonts
-Loading required package: showtextdb</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShzcERhdGEpXG5saWJyYXJ5KHNwRGF0YUxhcmdlKVxubGlicmFyeSh0ZXJyYSlcbmBgYCJ9 -->
-<pre class="r"><code>library(spData)
-library(spDataLarge)
-library(terra)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoidGVycmEgMS43Ljc4XG5cbkF0dGFjaGluZyBwYWNrYWdlOiDigJh0ZXJyYeKAmVxuXG5UaGUgZm9sbG93aW5nIG9iamVjdCBpcyBtYXNrZWQgZnJvbSDigJhwYWNrYWdlOmdsdWXigJk6XG5cbiAgICB0cmltXG5cblRoZSBmb2xsb3dpbmcgb2JqZWN0IGlzIG1hc2tlZCBmcm9tIOKAmHBhY2thZ2U6Z2dtYXDigJk6XG5cbiAgICBpbnNldFxuIn0= -->
-<pre><code>terra 1.7.78
-
-Attaching package: ‘terra’
-
-The following object is masked from ‘package:glue’:
-
-    trim
-
-The following object is masked from ‘package:ggmap’:
-
-    inset</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeSh0aWR5dmVyc2UpXG5gYGAifQ== -->
-<pre class="r"><code>library(tidyverse)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoi4pSA4pSAIEF0dGFjaGluZyBjb3JlIHRpZHl2ZXJzZSBwYWNrYWdlcyDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIAgdGlkeXZlcnNlIDIuMC4wIOKUgOKUgFxu4pyUIGRwbHlyICAgICAxLjEuNCAgICAg4pyUIHJlYWRyICAgICAyLjEuNVxu4pyUIGZvcmNhdHMgICAxLjAuMCAgICAg4pyUIHN0cmluZ3IgICAxLjUuMVxu4pyUIGx1YnJpZGF0ZSAxLjkuMyAgICAg4pyUIHRpYmJsZSAgICAzLjIuMVxu4pyUIHB1cnJyICAgICAxLjAuMiAgICAg4pyUIHRpZHlyICAgICAxLjMuMVxu4pSA4pSAIENvbmZsaWN0cyDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIAgdGlkeXZlcnNlX2NvbmZsaWN0cygpIOKUgOKUgFxu4pyWIHRpZHlyOjpleHRyYWN0KCkgICAgICAgIG1hc2tzIHRlcnJhOjpleHRyYWN0KClcbuKcliBkcGx5cjo6ZmlsdGVyKCkgICAgICAgICBtYXNrcyBzdGF0czo6ZmlsdGVyKClcbuKcliByZWFkcjo6Z3Vlc3NfZW5jb2RpbmcoKSBtYXNrcyBydmVzdDo6Z3Vlc3NfZW5jb2RpbmcoKVxu4pyWIGRwbHlyOjpsYWcoKSAgICAgICAgICAgIG1hc2tzIHN0YXRzOjpsYWcoKVxu4oS5IFVzZSB0aGUgXHUwMDFiXTg7O2h0dHA6Ly9jb25mbGljdGVkLnItbGliLm9yZy9cdTAwMDdjb25mbGljdGVkIHBhY2thZ2VcdTAwMWJdODs7XHUwMDA3IHRvIGZvcmNlIGFsbCBjb25mbGljdHMgdG8gYmVjb21lIGVycm9yc1xuIn0= -->
-<pre><code>── Attaching core tidyverse packages ─────────────────────────────────── tidyverse 2.0.0 ──
-✔ dplyr     1.1.4     ✔ readr     2.1.5
-✔ forcats   1.0.0     ✔ stringr   1.5.1
-✔ lubridate 1.9.3     ✔ tibble    3.2.1
-✔ purrr     1.0.2     ✔ tidyr     1.3.1
-── Conflicts ───────────────────────────────────────────────────── tidyverse_conflicts() ──
-✖ tidyr::extract()        masks terra::extract()
-✖ dplyr::filter()         masks stats::filter()
-✖ readr::guess_encoding() masks rvest::guess_encoding()
-✖ dplyr::lag()            masks stats::lag()
-ℹ Use the ]8;;http://conflicted.r-lib.org/conflicted package]8;; to force all conflicts to become errors</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeSh0bWFwKVxuYGBgIn0= -->
-<pre class="r"><code>library(tmap)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVnaXN0ZXJlZCBTMyBtZXRob2Qgb3ZlcndyaXR0ZW4gYnkgJ2h0bWx3aWRnZXRzJzpcbiAgbWV0aG9kICAgICAgICAgICBmcm9tICAgICAgICAgXG4gIHByaW50Lmh0bWx3aWRnZXQgdG9vbHM6cnN0dWRpb1xuQnJlYWtpbmcgTmV3czogdG1hcCAzLnggaXMgcmV0aXJpbmcuIFBsZWFzZSB0ZXN0IHY0LCBlLmcuIHdpdGhcbnJlbW90ZXM6Omluc3RhbGxfZ2l0aHViKCdyLXRtYXAvdG1hcCcpXG4ifQ== -->
-<pre><code>Registered S3 method overwritten by &#39;htmlwidgets&#39;:
-  method           from         
-  print.htmlwidget tools:rstudio
-Breaking News: tmap 3.x is retiring. Please test v4, e.g. with
-remotes::install_github(&#39;r-tmap/tmap&#39;)</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShydmVzdClcbmxpYnJhcnkodGlkeXZlcnNlKVxubGlicmFyeShvc21kYXRhKSAjIHBhY2thZ2UgZm9yIHdvcmtpbmcgd2l0aCBzdHJlZXRzXG5saWJyYXJ5KHNob3d0ZXh0KSAjIGZvciBjdXN0b20gZm9udHNcbmxpYnJhcnkoZ2dtYXApXG5saWJyYXJ5KHJ2ZXN0KVxubGlicmFyeShnZ3Bsb3QyKSAjIGFkZGVkIHRoaXMgb25lIG15c2VsZlxubGlicmFyeShzZilcbmxpYnJhcnkoZ2FwbWluZGVyKSAjIG1pZ2h0IHdvcmsgZm9yIGltYWdlIHNhdmluZz9cbmxpYnJhcnkgKGlncmFwaClcbmBgYCJ9 -->
-<pre class="r"><code>library(rvest)
-library(tidyverse)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShnZ21hcClcbmxpYnJhcnkoZ2x1ZSlcbmxpYnJhcnkoaGVyZSlcbmxpYnJhcnkob3NtZGF0YSkgIyBwYWNrYWdlIGZvciB3b3JraW5nIHdpdGggc3RyZWV0c1xubGlicmFyeShzZilcbmxpYnJhcnkoc2hvd3RleHQpICMgZm9yIGN1c3RvbSBmb250c1xubGlicmFyeShzcERhdGEpXG5saWJyYXJ5KHNwRGF0YUxhcmdlKVxubGlicmFyeSh0ZXJyYSlcbmxpYnJhcnkodG1hcClcbmxpYnJhcnkocnZlc3QpXG5saWJyYXJ5KHRpZHljZW5zdXMpXG5saWJyYXJ5KHRpZHl2ZXJzZSlcbmxpYnJhcnkodGlncmlzKVxuYGBgIn0= -->
+<pre class="r"><code>library(ggmap)
+library(glue)
+library(here)
 library(osmdata) # package for working with streets
+library(sf)
+library(showtext) # for custom fonts
+library(spData)
+library(spDataLarge)
+library(terra)
+library(tmap)
+library(rvest)
+library(tidycensus)
+library(tidyverse)
+library(tigris)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiV2FybmluZzogcGFja2FnZSDigJh0aWdyaXPigJkgd2FzIGJ1aWx0IHVuZGVyIFIgdmVyc2lvbiA0LjQuMlxuVG8gZW5hYmxlIGNhY2hpbmcgb2YgZGF0YSwgc2V0IGBvcHRpb25zKHRpZ3Jpc191c2VfY2FjaGUgPSBUUlVFKWBcbmluIHlvdXIgUiBzY3JpcHQgb3IgLlJwcm9maWxlLlxuXG5BdHRhY2hpbmcgcGFja2FnZTog4oCYdGlncmlz4oCZXG5cblRoZSBmb2xsb3dpbmcgb2JqZWN0IGlzIG1hc2tlZCBmcm9tIOKAmHBhY2thZ2U6aWdyYXBo4oCZOlxuXG4gICAgYmxvY2tzXG5cblRoZSBmb2xsb3dpbmcgb2JqZWN0IGlzIG1hc2tlZCBmcm9tIOKAmHBhY2thZ2U6dGVycmHigJk6XG5cbiAgICBibG9ja3NcbiJ9 -->
+<pre><code>Warning: package ‘tigris’ was built under R version 4.4.2
+To enable caching of data, set `options(tigris_use_cache = TRUE)`
+in your R script or .Rprofile.
+
+Attaching package: ‘tigris’
+
+The following object is masked from ‘package:igraph’:
+
+    blocks
+
+The following object is masked from ‘package:terra’:
+
+    blocks</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShvc21kYXRhKSAjIHBhY2thZ2UgZm9yIHdvcmtpbmcgd2l0aCBzdHJlZXRzXG5saWJyYXJ5KHNob3d0ZXh0KSAjIGZvciBjdXN0b20gZm9udHNcbmxpYnJhcnkoZ2dtYXApXG5saWJyYXJ5KHJ2ZXN0KVxubGlicmFyeShnZ3Bsb3QyKSAjIGFkZGVkIHRoaXMgb25lIG15c2VsZlxubGlicmFyeShzZilcbmxpYnJhcnkoZ2FwbWluZGVyKSAjIG1pZ2h0IHdvcmsgZm9yIGltYWdlIHNhdmluZz9cbmxpYnJhcnkgKGlncmFwaClcbmxpYnJhcnkgKGdncmFwaClcbmxpYnJhcnkgKGgzcilcbmxpYnJhcnkodGlkeXIpXG5gYGAifQ== -->
+<pre class="r"><code>library(osmdata) # package for working with streets
 library(showtext) # for custom fonts
 library(ggmap)
 library(rvest)
 library(ggplot2) # added this one myself
 library(sf)
 library(gapminder) # might work for image saving?
-library (igraph)</code></pre>
+library (igraph)
+library (ggraph)
+library (h3r)
+library(tidyr)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiV2FybmluZzogcGFja2FnZSDigJhpZ3JhcGjigJkgd2FzIGJ1aWx0IHVuZGVyIFIgdmVyc2lvbiA0LjQuMlxuXG5BdHRhY2hpbmcgcGFja2FnZTog4oCYaWdyYXBo4oCZXG5cblRoZSBmb2xsb3dpbmcgb2JqZWN0cyBhcmUgbWFza2VkIGZyb20g4oCYcGFja2FnZTpsdWJyaWRhdGXigJk6XG5cbiAgICAlLS0lLCB1bmlvblxuXG5UaGUgZm9sbG93aW5nIG9iamVjdHMgYXJlIG1hc2tlZCBmcm9tIOKAmHBhY2thZ2U6ZHBseXLigJk6XG5cbiAgICBhc19kYXRhX2ZyYW1lLCBncm91cHMsIHVuaW9uXG5cblRoZSBmb2xsb3dpbmcgb2JqZWN0cyBhcmUgbWFza2VkIGZyb20g4oCYcGFja2FnZTpwdXJycuKAmTpcblxuICAgIGNvbXBvc2UsIHNpbXBsaWZ5XG5cblRoZSBmb2xsb3dpbmcgb2JqZWN0IGlzIG1hc2tlZCBmcm9tIOKAmHBhY2thZ2U6dGlkeXLigJk6XG5cbiAgICBjcm9zc2luZ1xuXG5UaGUgZm9sbG93aW5nIG9iamVjdCBpcyBtYXNrZWQgZnJvbSDigJhwYWNrYWdlOnRpYmJsZeKAmTpcblxuICAgIGFzX2RhdGFfZnJhbWVcblxuVGhlIGZvbGxvd2luZyBvYmplY3RzIGFyZSBtYXNrZWQgZnJvbSDigJhwYWNrYWdlOnRlcnJh4oCZOlxuXG4gICAgYmxvY2tzLCBjb21wYXJlLCB1bmlvblxuXG5UaGUgZm9sbG93aW5nIG9iamVjdHMgYXJlIG1hc2tlZCBmcm9tIOKAmHBhY2thZ2U6c3RhdHPigJk6XG5cbiAgICBkZWNvbXBvc2UsIHNwZWN0cnVtXG5cblRoZSBmb2xsb3dpbmcgb2JqZWN0IGlzIG1hc2tlZCBmcm9tIOKAmHBhY2thZ2U6YmFzZeKAmTpcblxuICAgIHVuaW9uXG4ifQ== -->
-<pre><code>Warning: package ‘igraph’ was built under R version 4.4.2
-
-Attaching package: ‘igraph’
-
-The following objects are masked from ‘package:lubridate’:
-
-    %--%, union
-
-The following objects are masked from ‘package:dplyr’:
-
-    as_data_frame, groups, union
-
-The following objects are masked from ‘package:purrr’:
-
-    compose, simplify
-
-The following object is masked from ‘package:tidyr’:
-
-    crossing
-
-The following object is masked from ‘package:tibble’:
-
-    as_data_frame
-
-The following objects are masked from ‘package:terra’:
-
-    blocks, compare, union
-
-The following objects are masked from ‘package:stats’:
-
-    decompose, spectrum
-
-The following object is masked from ‘package:base’:
-
-    union</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeSAoZ2dyYXBoKVxuYGBgIn0= -->
-<pre class="r"><code>library (ggraph)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiV2FybmluZzogcGFja2FnZSDigJhnZ3JhcGjigJkgd2FzIGJ1aWx0IHVuZGVyIFIgdmVyc2lvbiA0LjQuMlxuIn0= -->
-<pre><code>Warning: package ‘ggraph’ was built under R version 4.4.2</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeSAoaDNyKVxuYGBgIn0= -->
-<pre class="r"><code>library (h3r)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiV2FybmluZzogcGFja2FnZSDigJhoM3LigJkgd2FzIGJ1aWx0IHVuZGVyIFIgdmVyc2lvbiA0LjQuMlxuTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBoM2xpYlxuXG5BdHRhY2hpbmcgcGFja2FnZTog4oCYaDNy4oCZXG5cblRoZSBmb2xsb3dpbmcgb2JqZWN0IGlzIG1hc2tlZCBmcm9tIOKAmHBhY2thZ2U6dGVycmHigJk6XG5cbiAgICBncmlkRGlzdGFuY2VcbiJ9 -->
-<pre><code>Warning: package ‘h3r’ was built under R version 4.4.2
-Loading required package: h3lib
-
-Attaching package: ‘h3r’
-
-The following object is masked from ‘package:terra’:
-
-    gridDistance</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
@@ -1962,36 +1856,50 @@ save(phoenixarizonadata,
 <p>Determining Urban vs Suburban Areas Using Geohashes:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2V0YmIoXCJQaG9lbml4IEFyaXpvbmFcIilcbmBgYCJ9 -->
-<pre class="r"><code>getbb(&quot;Phoenix Arizona&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgbWluICAgICAgICBtYXhcbnggLTExMi4zMjQwMyAtMTExLjkyNTUzXG55ICAgMzMuMjkwMzcgICAzMy45MTgzOFxuIn0= -->
-<pre><code>         min        max
-x -112.32403 -111.92553
-y   33.29037   33.91838</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2V0UGVudGFnb25zKFwiNlwiKVxuYGBgIn0= -->
-<pre class="r"><code>getPentagons(&quot;6&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiW1sxXV1cbiBbMV0gXCI4NjA4MDAwMDdmZmZmZmZcIiBcIjg2MWMwMDAwN2ZmZmZmZlwiIFwiODYzMDAwMDA3ZmZmZmZmXCIgXCI4NjRjMDAwMDdmZmZmZmZcIlxuIFs1XSBcIjg2NjIwMDAwN2ZmZmZmZlwiIFwiODY3NDAwMDA3ZmZmZmZmXCIgXCI4NjdlMDAwMDdmZmZmZmZcIiBcIjg2OTAwMDAwN2ZmZmZmZlwiXG4gWzldIFwiODZhNjAwMDA3ZmZmZmZmXCIgXCI4NmMyMDAwMDdmZmZmZmZcIiBcIjg2ZDYwMDAwN2ZmZmZmZlwiIFwiODZlYTAwMDA3ZmZmZmZmXCJcbiJ9 -->
-<pre><code>[[1]]
- [1] &quot;860800007ffffff&quot; &quot;861c00007ffffff&quot; &quot;863000007ffffff&quot; &quot;864c00007ffffff&quot;
- [5] &quot;866200007ffffff&quot; &quot;867400007ffffff&quot; &quot;867e00007ffffff&quot; &quot;869000007ffffff&quot;
- [9] &quot;86a600007ffffff&quot; &quot;86c200007ffffff&quot; &quot;86d600007ffffff&quot; &quot;86ea00007ffffff&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGhvZW5peF9ib3VuZGFyaWVzIDwtIGdldGJiKFwiUGhvZW5peCBBcml6b25hXCIpJT4lXG4gIG9wcSgpJT4lXG4gIGFkZF9vc21fZmVhdHVyZShrZXkgPSBcImJvdW5kYXJ5XCIsIFxuICAgICAgICAgICAgICAgICAgdmFsdWUgPSBjKFwic3RhdGlzdGljYWxcIikpICU+JVxuICBvc21kYXRhX3NmKClcblxucGhvZW5peF9ib3VuZGFyaWVzOmgzcjo6ZGlyZWN0ZWRFZGdlVG9Cb3VuZGFyeShcInBob2VuaXhfYm91bmRhcmllc1wiKVxuYGBgIn0= -->
-<pre class="r"><code>phoenix_boundaries &lt;- getbb(&quot;Phoenix Arizona&quot;)%&gt;%
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2V0YmIoXCJQaG9lbml4IEFyaXpvbmFcIilcbmdldFBlbnRhZ29ucyhcIjZcIikgI2gzciBwYWNrYWdlXG5cbnBob2VuaXhfYm91bmRhcmllcyA8LSBnZXRiYihcIlBob2VuaXggQXJpem9uYVwiKSU+JVxuICBvcHEoKSU+JVxuICBhZGRfb3NtX2ZlYXR1cmUoa2V5ID0gXCJib3VuZGFyeVwiLCBcbiAgICAgICAgICAgICAgICAgIHZhbHVlID0gYyhcInN0YXRpc3RpY2FsXCIpKSAlPiVcbiAgb3NtZGF0YV9zZigpXG5cblxuZ2VvaGFzaGVzIDwtIGgzcjo6XyhwaG9lbml4X2JvdW5kYXJpZXMsIHJlcyA9IDYpXG4gIFxuICAjIGlmIHN0YXRpc3RpY2FsIGRvZXMgbm90IHdvcmssIHRyeSBjZW5zdXNcblxuXG5gYGAifQ== -->
+<pre class="r"><code>getbb(&quot;Phoenix Arizona&quot;)
+getPentagons(&quot;6&quot;) #h3r package
+
+phoenix_boundaries &lt;- getbb(&quot;Phoenix Arizona&quot;)%&gt;%
   opq()%&gt;%
   add_osm_feature(key = &quot;boundary&quot;, 
                   value = c(&quot;statistical&quot;)) %&gt;%
   osmdata_sf()
 
-phoenix_boundaries:h3r::directedEdgeToBoundary(&quot;phoenix_boundaries&quot;)</code></pre>
+
+geohashes &lt;- h3r::_(phoenix_boundaries, res = 6)
+  
+  # if statistical does not work, try census
+</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gaDNyOjpkaXJlY3RlZEVkZ2VUb0JvdW5kYXJ5KFwicGhvZW5peF9ib3VuZGFyaWVzXCIpIDogXG4gIGgzciAtIEVycm9yIGF0IGl0ZW0gbnVtYmVyIDE6IEVfRkFJTEVEOiBUaGUgb3BlcmF0aW9uIGZhaWxlZCBidXQgYSBtb3JlIHNwZWNpZmljIGVycm9yIGlzIG5vdCBhdmFpbGFibGVcbiJ9 -->
-<pre><code>Error in h3r::directedEdgeToBoundary(&quot;phoenix_boundaries&quot;) : 
-  h3r - Error at item number 1: E_FAILED: The operation failed but a more specific error is not available</code></pre>
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5vcHRpb25zKHRpZ3Jpc191c2VfY2FjaGUgPSBUUlVFKVxuXG5waG9lbml4dHJhY3RzIDwtIGdldF9kZWNlbm5pYWwoZ2VvZ3JhcGh5ID0gXCJ0cmFjdFwiLFxuICAgICAgICAgICAgICAgICAgICAgICAgICB2YXJpYWJsZXMgPSBcIkgxXzAwMU5cIixcbiAgICAgICAgICAgICAgICAgICAgICAgICAgc3RhdGUgPSBcIkFyaXpvbmFcIixcbiAgICAgICAgICAgICAgICAgICAgICAgIGNic2EgPSBcIlBob2VuaXhcIixcbiAgICAgICAgICAgICAgICAgICAgICAgIHllYXIgPSAyMDIwLFxuICAgICAgICAgICAgICAgICAgICAgICAgZ2VvbWV0cnkgPSBUUlVFXG4pXG5gYGAifQ== -->
+<pre class="r"><code>
+options(tigris_use_cache = TRUE)
+
+phoenixtracts &lt;- get_decennial(geography = &quot;tract&quot;,
+                          variables = &quot;H1_001N&quot;,
+                          state = &quot;Arizona&quot;,
+                        cbsa = &quot;Phoenix&quot;,
+                        year = 2020,
+                        geometry = TRUE
+)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiR2V0dGluZyBkYXRhIGZyb20gdGhlIDIwMjAgZGVjZW5uaWFsIENlbnN1c1xuVXNpbmcgRklQUyBjb2RlICcwNCcgZm9yIHN0YXRlICdBcml6b25hJ1xuVXNpbmcgdGhlIFBMIDk0LTE3MSBSZWRpc3RyaWN0aW5nIERhdGEgU3VtbWFyeSBGaWxlXG5FcnJvciBpbiBsb2FkX3RpZ2VyKHVybCwgdGlncmlzX3R5cGUgPSBcInRyYWN0XCIsIC4uLikgOiBcbiAgdW51c2VkIGFyZ3VtZW50IChjYnNhID0gXCJQaG9lbml4XCIpXG5FcnJvcjogWW91ciBnZW9tZXRyeSBkYXRhIGRvd25sb2FkIGZhaWxlZC4gUGxlYXNlIHRyeSBhZ2FpbiBsYXRlciBvciBjaGVjayB0aGUgc3RhdHVzIG9mIHRoZSBDZW5zdXMgQnVyZWF1IHdlYnNpdGUgYXQgaHR0cHM6Ly93d3cyLmNlbnN1cy5nb3YvZ2VvL3RpZ2VyL1xuIn0= -->
+<pre><code>Getting data from the 2020 decennial Census
+Using FIPS code &#39;04&#39; for state &#39;Arizona&#39;
+Using the PL 94-171 Redistricting Data Summary File
+Error in load_tiger(url, tigris_type = &quot;tract&quot;, ...) : 
+  unused argument (cbsa = &quot;Phoenix&quot;)
+Error: Your geometry data download failed. Please try again later or check the status of the Census Bureau website at https://www2.census.gov/geo/tiger/</code></pre>
 <!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Add a new chunk by clicking the <em>Insert Chunk</em> button on the
@@ -2005,7 +1913,7 @@ run any R code chunks. Instead, the output of the chunk when it was last
 run in the editor is displayed.</p>
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIlBob2VuaXggQXJpem9uYSINCm91dHB1dDogaHRtbF9ub3RlYm9vaw0KLS0tDQoNClRoaXMgd2lsbCBiZSBhbGwgdGhlIHdvcmsgZm9yIHRoZSBQaG9lbml4LCBBcml6b25hIGRhdGEgKG9uZSBvZiB0aGUgNSBzZWxlY3RlZCBjaXRpZXMgdXNlZCBhcyBwYXJ0IG9mIHRoaXMgdGhlc2lzIHdvcmspLg0KDQpgYGB7cn0NCmxpYnJhcnkoZ2dtYXApDQpsaWJyYXJ5KGdsdWUpDQpsaWJyYXJ5KGhlcmUpDQpsaWJyYXJ5KG9zbWRhdGEpICMgcGFja2FnZSBmb3Igd29ya2luZyB3aXRoIHN0cmVldHMNCmxpYnJhcnkoc2YpDQpsaWJyYXJ5KHNob3d0ZXh0KSAjIGZvciBjdXN0b20gZm9udHMNCmxpYnJhcnkoc3BEYXRhKQ0KbGlicmFyeShzcERhdGFMYXJnZSkNCmxpYnJhcnkodGVycmEpDQpsaWJyYXJ5KHRpZHl2ZXJzZSkNCmxpYnJhcnkodG1hcCkNCmxpYnJhcnkocnZlc3QpDQpsaWJyYXJ5KHRpZHl2ZXJzZSkNCmxpYnJhcnkob3NtZGF0YSkgIyBwYWNrYWdlIGZvciB3b3JraW5nIHdpdGggc3RyZWV0cw0KbGlicmFyeShzaG93dGV4dCkgIyBmb3IgY3VzdG9tIGZvbnRzDQpsaWJyYXJ5KGdnbWFwKQ0KbGlicmFyeShydmVzdCkNCmxpYnJhcnkoZ2dwbG90MikgIyBhZGRlZCB0aGlzIG9uZSBteXNlbGYNCmxpYnJhcnkoc2YpDQpsaWJyYXJ5KGdhcG1pbmRlcikgIyBtaWdodCB3b3JrIGZvciBpbWFnZSBzYXZpbmc/DQpsaWJyYXJ5IChpZ3JhcGgpDQpsaWJyYXJ5IChnZ3JhcGgpDQpsaWJyYXJ5IChoM3IpDQpgYGANCg0KYGBge3J9DQpnZXRiYigiUGhvZW5peCBBcml6b25hIikNCmF2YWlsYWJsZV90YWdzKCJoaWdod2F5IikNCg0KYmlnX3N0cmVldHMgPC0gZ2V0YmIoIlBob2VuaXggQXJpem9uYSIpJT4lDQogIG9wcSgpJT4lDQogIGFkZF9vc21fZmVhdHVyZShrZXkgPSAiaGlnaHdheSIsIA0KICAgICAgICAgICAgICAgICAgdmFsdWUgPSBjKCJtb3RvcndheSIsICJwcmltYXJ5IiwgIm1vdG9yd2F5X2xpbmsiLCAicHJpbWFyeV9saW5rIikpICU+JQ0KICBvc21kYXRhX3NmKCkNCg0KbWVkX3N0cmVldHMgPC0gZ2V0YmIoIlBob2VuaXggQXJpem9uYSIpJT4lDQogIG9wcSgpJT4lDQogIGFkZF9vc21fZmVhdHVyZShrZXkgPSAiaGlnaHdheSIsIA0KICAgICAgICAgICAgICAgICAgdmFsdWUgPSBjKCJzZWNvbmRhcnkiLCAidGVydGlhcnkiLCAic2Vjb25kYXJ5X2xpbmsiLCAidGVydGlhcnlfbGluayIpKSAlPiUNCiAgb3NtZGF0YV9zZigpDQoNCg0Kc21hbGxfc3RyZWV0cyA8LSBnZXRiYigiUGhvZW5peCBBcml6b25hIiklPiUNCiAgb3BxKCklPiUNCiAgYWRkX29zbV9mZWF0dXJlKGtleSA9ICJoaWdod2F5IiwgDQogICAgICAgICAgICAgICAgICB2YWx1ZSA9IGMoInJlc2lkZW50aWFsIiwgImxpdmluZ19zdHJlZXQiLA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICJ1bmNsYXNzaWZpZWQiLA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICJzZXJ2aWNlIiwgImZvb3R3YXkiKSkgJT4lDQogIG9zbWRhdGFfc2YoKQ0KDQpwaG9lbml4YXJpem9uYWRhdGEgPC0gYmluZF9yb3dzKGJpZ19zdHJlZXRzJG9zbV9saW5lcywgbWVkX3N0cmVldHMkb3NtX2xpbmVzLCBzbWFsbF9zdHJlZXRzJG9zbV9saW5lcykNCg0Kc2F2ZShwaG9lbml4YXJpem9uYWRhdGEsIA0KICAgICBmaWxlID0gZ2x1ZTo6Z2x1ZShoZXJlOjpoZXJlKCksICIvZGF0YS1yYXcvcGhvZW5peGFyaXpvbmFkYXRhLnJkYSIpLCANCiAgICAgY29tcHJlc3MgPSAieHoiKQ0KYGBgDQpEZXRlcm1pbmluZyBVcmJhbiB2cyBTdWJ1cmJhbiBBcmVhcyBVc2luZyBHZW9oYXNoZXM6DQoNCmBgYHtyfQ0KZ2V0YmIoIlBob2VuaXggQXJpem9uYSIpDQpnZXRQZW50YWdvbnMoIjYiKSAjaDNyIHBhY2thZ2UNCg0KcGhvZW5peF9ib3VuZGFyaWVzIDwtIGdldGJiKCJQaG9lbml4IEFyaXpvbmEiKSU+JQ0KICBvcHEoKSU+JQ0KICBhZGRfb3NtX2ZlYXR1cmUoa2V5ID0gImJvdW5kYXJ5IiwgDQogICAgICAgICAgICAgICAgICB2YWx1ZSA9IGMoInN0YXRpc3RpY2FsIikpICU+JQ0KICBvc21kYXRhX3NmKCkNCg0KDQpnZW9oYXNoZXMgPC0gaDNyOjpfKHBob2VuaXhfYm91bmRhcmllcywgcmVzID0gNikNCiAgDQogICMgaWYgc3RhdGlzdGljYWwgZG9lcyBub3Qgd29yaywgdHJ5IGNlbnN1cw0KDQoNCmBgYA0KDQpBZGQgYSBuZXcgY2h1bmsgYnkgY2xpY2tpbmcgdGhlICpJbnNlcnQgQ2h1bmsqIGJ1dHRvbiBvbiB0aGUgdG9vbGJhciBvciBieSBwcmVzc2luZyAqQ3RybCtBbHQrSSouDQoNCldoZW4geW91IHNhdmUgdGhlIG5vdGVib29rLCBhbiBIVE1MIGZpbGUgY29udGFpbmluZyB0aGUgY29kZSBhbmQgb3V0cHV0IHdpbGwgYmUgc2F2ZWQgYWxvbmdzaWRlIGl0IChjbGljayB0aGUgKlByZXZpZXcqIGJ1dHRvbiBvciBwcmVzcyAqQ3RybCtTaGlmdCtLKiB0byBwcmV2aWV3IHRoZSBIVE1MIGZpbGUpLg0KDQpUaGUgcHJldmlldyBzaG93cyB5b3UgYSByZW5kZXJlZCBIVE1MIGNvcHkgb2YgdGhlIGNvbnRlbnRzIG9mIHRoZSBlZGl0b3IuIENvbnNlcXVlbnRseSwgdW5saWtlICpLbml0KiwgKlByZXZpZXcqIGRvZXMgbm90IHJ1biBhbnkgUiBjb2RlIGNodW5rcy4gSW5zdGVhZCwgdGhlIG91dHB1dCBvZiB0aGUgY2h1bmsgd2hlbiBpdCB3YXMgbGFzdCBydW4gaW4gdGhlIGVkaXRvciBpcyBkaXNwbGF5ZWQuDQo=</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlBob2VuaXggQXJpem9uYSINCm91dHB1dDogaHRtbF9ub3RlYm9vaw0KLS0tDQoNClRoaXMgd2lsbCBiZSBhbGwgdGhlIHdvcmsgZm9yIHRoZSBQaG9lbml4LCBBcml6b25hIGRhdGEgKG9uZSBvZiB0aGUgNSBzZWxlY3RlZCBjaXRpZXMgdXNlZCBhcyBwYXJ0IG9mIHRoaXMgdGhlc2lzIHdvcmspLg0KDQpgYGB7cn0NCmxpYnJhcnkoZ2dtYXApDQpsaWJyYXJ5KGdsdWUpDQpsaWJyYXJ5KGhlcmUpDQpsaWJyYXJ5KG9zbWRhdGEpICMgcGFja2FnZSBmb3Igd29ya2luZyB3aXRoIHN0cmVldHMNCmxpYnJhcnkoc2YpDQpsaWJyYXJ5KHNob3d0ZXh0KSAjIGZvciBjdXN0b20gZm9udHMNCmxpYnJhcnkoc3BEYXRhKQ0KbGlicmFyeShzcERhdGFMYXJnZSkNCmxpYnJhcnkodGVycmEpDQpsaWJyYXJ5KHRtYXApDQpsaWJyYXJ5KHJ2ZXN0KQ0KbGlicmFyeSh0aWR5Y2Vuc3VzKQ0KbGlicmFyeSh0aWR5dmVyc2UpDQpsaWJyYXJ5KHRpZ3JpcykNCmxpYnJhcnkob3NtZGF0YSkgIyBwYWNrYWdlIGZvciB3b3JraW5nIHdpdGggc3RyZWV0cw0KbGlicmFyeShzaG93dGV4dCkgIyBmb3IgY3VzdG9tIGZvbnRzDQpsaWJyYXJ5KGdnbWFwKQ0KbGlicmFyeShydmVzdCkNCmxpYnJhcnkoZ2dwbG90MikgIyBhZGRlZCB0aGlzIG9uZSBteXNlbGYNCmxpYnJhcnkoc2YpDQpsaWJyYXJ5KGdhcG1pbmRlcikgIyBtaWdodCB3b3JrIGZvciBpbWFnZSBzYXZpbmc/DQpsaWJyYXJ5IChpZ3JhcGgpDQpsaWJyYXJ5IChnZ3JhcGgpDQpsaWJyYXJ5IChoM3IpDQpsaWJyYXJ5KHRpZHlyKQ0KYGBgDQoNCmBgYHtyfQ0KZ2V0YmIoIlBob2VuaXggQXJpem9uYSIpDQphdmFpbGFibGVfdGFncygiaGlnaHdheSIpDQoNCmJpZ19zdHJlZXRzIDwtIGdldGJiKCJQaG9lbml4IEFyaXpvbmEiKSU+JQ0KICBvcHEoKSU+JQ0KICBhZGRfb3NtX2ZlYXR1cmUoa2V5ID0gImhpZ2h3YXkiLCANCiAgICAgICAgICAgICAgICAgIHZhbHVlID0gYygibW90b3J3YXkiLCAicHJpbWFyeSIsICJtb3RvcndheV9saW5rIiwgInByaW1hcnlfbGluayIpKSAlPiUNCiAgb3NtZGF0YV9zZigpDQoNCm1lZF9zdHJlZXRzIDwtIGdldGJiKCJQaG9lbml4IEFyaXpvbmEiKSU+JQ0KICBvcHEoKSU+JQ0KICBhZGRfb3NtX2ZlYXR1cmUoa2V5ID0gImhpZ2h3YXkiLCANCiAgICAgICAgICAgICAgICAgIHZhbHVlID0gYygic2Vjb25kYXJ5IiwgInRlcnRpYXJ5IiwgInNlY29uZGFyeV9saW5rIiwgInRlcnRpYXJ5X2xpbmsiKSkgJT4lDQogIG9zbWRhdGFfc2YoKQ0KDQoNCnNtYWxsX3N0cmVldHMgPC0gZ2V0YmIoIlBob2VuaXggQXJpem9uYSIpJT4lDQogIG9wcSgpJT4lDQogIGFkZF9vc21fZmVhdHVyZShrZXkgPSAiaGlnaHdheSIsIA0KICAgICAgICAgICAgICAgICAgdmFsdWUgPSBjKCJyZXNpZGVudGlhbCIsICJsaXZpbmdfc3RyZWV0IiwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAidW5jbGFzc2lmaWVkIiwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAic2VydmljZSIsICJmb290d2F5IikpICU+JQ0KICBvc21kYXRhX3NmKCkNCg0KcGhvZW5peGFyaXpvbmFkYXRhIDwtIGJpbmRfcm93cyhiaWdfc3RyZWV0cyRvc21fbGluZXMsIG1lZF9zdHJlZXRzJG9zbV9saW5lcywgc21hbGxfc3RyZWV0cyRvc21fbGluZXMpDQoNCnNhdmUocGhvZW5peGFyaXpvbmFkYXRhLCANCiAgICAgZmlsZSA9IGdsdWU6OmdsdWUoaGVyZTo6aGVyZSgpLCAiL2RhdGEtcmF3L3Bob2VuaXhhcml6b25hZGF0YS5yZGEiKSwgDQogICAgIGNvbXByZXNzID0gInh6IikNCmBgYA0KRGV0ZXJtaW5pbmcgVXJiYW4gdnMgU3VidXJiYW4gQXJlYXMgVXNpbmcgR2VvaGFzaGVzOg0KDQpgYGB7cn0NCmdldGJiKCJQaG9lbml4IEFyaXpvbmEiKQ0KZ2V0UGVudGFnb25zKCI2IikgI2gzciBwYWNrYWdlDQoNCnBob2VuaXhfYm91bmRhcmllcyA8LSBnZXRiYigiUGhvZW5peCBBcml6b25hIiklPiUNCiAgb3BxKCklPiUNCiAgYWRkX29zbV9mZWF0dXJlKGtleSA9ICJib3VuZGFyeSIsIA0KICAgICAgICAgICAgICAgICAgdmFsdWUgPSBjKCJzdGF0aXN0aWNhbCIpKSAlPiUNCiAgb3NtZGF0YV9zZigpDQoNCg0KZ2VvaGFzaGVzIDwtIGgzcjo6XyhwaG9lbml4X2JvdW5kYXJpZXMsIHJlcyA9IDYpDQogIA0KICAjIGlmIHN0YXRpc3RpY2FsIGRvZXMgbm90IHdvcmssIHRyeSBjZW5zdXMNCg0KDQpgYGANCg0KYGBge3J9DQoNCm9wdGlvbnModGlncmlzX3VzZV9jYWNoZSA9IFRSVUUpDQoNCnBob2VuaXh0cmFjdHMgPC0gZ2V0X2RlY2VubmlhbChnZW9ncmFwaHkgPSAidHJhY3QiLA0KICAgICAgICAgICAgICAgICAgICAgICAgICB2YXJpYWJsZXMgPSAiSDFfMDAxTiIsDQogICAgICAgICAgICAgICAgICAgICAgICAgIHN0YXRlID0gIkFyaXpvbmEiLA0KICAgICAgICAgICAgICAgICAgICAgICAgY2JzYSA9ICJQaG9lbml4IiwNCiAgICAgICAgICAgICAgICAgICAgICAgIHllYXIgPSAyMDIwLA0KICAgICAgICAgICAgICAgICAgICAgICAgZ2VvbWV0cnkgPSBUUlVFDQopDQoNCnBsb3QocGhvZW5peHRyYWN0cyRnZW9tZXRyeSkNCg0KZ2dwbG90KCkgKw0KICBnZW9tX3NmKGRhdGEgPSAicGhvZW5peHRyYWN0cyIsIGFlcyA9IChmaWxsID0gZXN0aW1hdGUpKQ0KDQojIGh0dHBzOi8vd2Fsa2VyLWRhdGEuY29tL2NlbnN1cy1yL21hcHBpbmctY2Vuc3VzLWRhdGEtd2l0aC1yLmh0bWwNCiAgDQojICAgICAgICAgICAgICAgICAgICAgICAgIGNic2EgPSAiUGhvZW5peCIsDQoNCiMgcGhvZW5peHRyYWN0cyA8LSBnZXRfZGVjZW5uaWFsKGdlb2dyYXBoeSA9ICJ0cmFjdCIsDQojICAgICAgICAgICAgICAgICAgICAgICAgICB2YXJpYWJsZXMgPSAiSDFfMDAxTiIsDQojICAgICAgICAgICAgICAgICAgICAgICAgICBzdGF0ZSA9ICJBcml6b25hIiwNCiMgICAgICAgICAgICAgICAgICAgICAgICB5ZWFyID0gMjAyMCwNCiMgICAgICAgICAgICAgICAgICAgICAgICBnZW9tZXRyeSA9IFRSVUUNCiMpDQpgYGANCg0KYGBge3J9DQoNCg0KYGBgDQoNCkFkZCBhIG5ldyBjaHVuayBieSBjbGlja2luZyB0aGUgKkluc2VydCBDaHVuayogYnV0dG9uIG9uIHRoZSB0b29sYmFyIG9yIGJ5IHByZXNzaW5nICpDdHJsK0FsdCtJKi4NCg0KV2hlbiB5b3Ugc2F2ZSB0aGUgbm90ZWJvb2ssIGFuIEhUTUwgZmlsZSBjb250YWluaW5nIHRoZSBjb2RlIGFuZCBvdXRwdXQgd2lsbCBiZSBzYXZlZCBhbG9uZ3NpZGUgaXQgKGNsaWNrIHRoZSAqUHJldmlldyogYnV0dG9uIG9yIHByZXNzICpDdHJsK1NoaWZ0K0sqIHRvIHByZXZpZXcgdGhlIEhUTUwgZmlsZSkuDQoNClRoZSBwcmV2aWV3IHNob3dzIHlvdSBhIHJlbmRlcmVkIEhUTUwgY29weSBvZiB0aGUgY29udGVudHMgb2YgdGhlIGVkaXRvci4gQ29uc2VxdWVudGx5LCB1bmxpa2UgKktuaXQqLCAqUHJldmlldyogZG9lcyBub3QgcnVuIGFueSBSIGNvZGUgY2h1bmtzLiBJbnN0ZWFkLCB0aGUgb3V0cHV0IG9mIHRoZSBjaHVuayB3aGVuIGl0IHdhcyBsYXN0IHJ1biBpbiB0aGUgZWRpdG9yIGlzIGRpc3BsYXllZC4NCg==</div>
 
 
 

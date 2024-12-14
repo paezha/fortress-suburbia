@@ -15,10 +15,11 @@ library(showtext) # for custom fonts
 library(spData)
 library(spDataLarge)
 library(terra)
-library(tidyverse)
 library(tmap)
 library(rvest)
+library(tidycensus)
 library(tidyverse)
+library(tigris)
 library(osmdata) # package for working with streets
 library(showtext) # for custom fonts
 library(ggmap)
@@ -29,6 +30,7 @@ library(gapminder) # might work for image saving?
 library (igraph)
 library (ggraph)
 library (h3r)
+library(tidyr)
 ```
 
 ```{r}
@@ -78,6 +80,40 @@ phoenix_boundaries <- getbb("Phoenix Arizona")%>%
 geohashes <- h3r::_(phoenix_boundaries, res = 6)
   
   # if statistical does not work, try census
+
+
+```
+
+```{r}
+
+options(tigris_use_cache = TRUE)
+
+phoenixtracts <- get_decennial(geography = "tract",
+                          variables = "H1_001N",
+                          state = "Arizona",
+                        cbsa = "Phoenix",
+                        year = 2020,
+                        geometry = TRUE
+)
+
+plot(phoenixtracts$geometry)
+
+ggplot() +
+  geom_sf(data = "phoenixtracts", aes = (fill = estimate))
+
+# https://walker-data.com/census-r/mapping-census-data-with-r.html
+  
+#                         cbsa = "Phoenix",
+
+# phoenixtracts <- get_decennial(geography = "tract",
+#                          variables = "H1_001N",
+#                          state = "Arizona",
+#                        year = 2020,
+#                        geometry = TRUE
+#)
+```
+
+```{r}
 
 
 ```
