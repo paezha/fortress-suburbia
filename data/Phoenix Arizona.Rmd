@@ -5,121 +5,282 @@ output: html_notebook
 
 This will be all the work for the Phoenix, Arizona data (one of the 5 selected cities used as part of this thesis work).
 
+Load packages:
 ```{r}
-library(ggmap)
-library(glue)
-library(here)
+#library(ggmap)
+library(glue) # Interpreted String Literals
+library (h3)
+library(here) # A Simpler Way to Find Your Files
 library(osmdata) # package for working with streets
-library(sf)
-library(showtext) # for custom fonts
-library(spData)
-library(spDataLarge)
-library(terra)
-library(tmap)
-library(rvest)
-library(tidycensus)
-library(tidyverse)
-library(tigris)
-library(osmdata) # package for working with streets
-library(showtext) # for custom fonts
-library(ggmap)
-library(rvest)
-library(ggplot2) # added this one myself
-library(sf)
-library(gapminder) # might work for image saving?
-library (igraph)
-library (ggraph)
-library (h3r)
-library(tidyr)
+library(sf) # Simple Features for R
+library(tidycensus) # Load US Census Boundary and Attribute Data as 'tidyverse' and 'sf'-Ready Data Frames
+library(tidyverse) # Easily Install and Load the 'Tidyverse'
+library(tigris) # Load Census TIGER/Line Shapefiles
 ```
 
-```{r}
-getbb("Phoenix Arizona")
-available_tags("highway")
+## Network data
 
-big_streets <- getbb("Phoenix Arizona")%>%
-  opq()%>%
-  add_osm_feature(key = "highway", 
-                  value = c("motorway", "primary", "motorway_link", "primary_link")) %>%
-  osmdata_sf()
+Download OSM data for Arizona [here](https://download.geofabrik.de/north-america/us/arizona.html). It will be a proto-buffer file (pbf). Save under `data-raw/r5_graph`.
 
-med_streets <- getbb("Phoenix Arizona")%>%
-  opq()%>%
-  add_osm_feature(key = "highway", 
-                  value = c("secondary", "tertiary", "secondary_link", "tertiary_link")) %>%
-  osmdata_sf()
+## Census tracts
 
-
-small_streets <- getbb("Phoenix Arizona")%>%
-  opq()%>%
-  add_osm_feature(key = "highway", 
-                  value = c("residential", "living_street",
-                            "unclassified",
-                            "service", "footway")) %>%
-  osmdata_sf()
-
-phoenixarizonadata <- bind_rows(big_streets$osm_lines, med_streets$osm_lines, small_streets$osm_lines)
-
-save(phoenixarizonadata, 
-     file = glue::glue(here::here(), "/data-raw/phoenixarizonadata.rda"), 
-     compress = "xz")
-```
-Determining Urban vs Suburban Areas Using Geohashes:
+Obtain the census tracts for Phoenix. Note that [{tidycensus}](https://walker-data.com/tidycensus/) function `get_decenial()` allows the selection of state and county, but not metro area or city. Check the example [here](https://walker-data.com/census-r/spatial-analysis-with-us-census-data.html#identifying-geometries-within-a-metropolitan-area) to see how to select tracts in a city.
 
 ```{r}
-getbb("Phoenix Arizona")
-getPentagons("6") #h3r package
-
-phoenix_boundaries <- getbb("Phoenix Arizona")%>%
-  opq()%>%
-  add_osm_feature(key = "boundary", 
-                  value = c("statistical")) %>%
-  osmdata_sf()
-
-
-geohashes <- h3r::_(phoenix_boundaries, res = 6)
-  
-  # if statistical does not work, try census
-
-
-```
-
-```{r}
-
 options(tigris_use_cache = TRUE)
 
-phoenixtracts <- get_decennial(geography = "tract",
-                          variables = "H1_001N",
-                          state = "Arizona",
-                        cbsa = "Phoenix",
-                        year = 2020,
-                        geometry = TRUE
+az_tracts <- get_decennial(geography = "tract",
+                           variables = "H1_001N",
+                           state = "Arizona",
+                           year = 2020,
+                           geometry = TRUE
 )
 
-plot(phoenixtracts$geometry)
+az_city <- urban_areas(year = 2020) |> 
+  filter(str_detect(NAME10, "AZ"))
+```
 
+A [core-based statistical area](https://en.wikipedia.org/wiki/Core-based_statistical_area) is a generous definition of the area of interest, since it contains an urban nucleus (say, Phoenix) and also all neighboring communities that are tightly integrated with it.
+```{r}
+phoenix_cbsa <- core_based_statistical_areas(year = 2020) |>
+  filter(str_detect(NAME, "Phoenix"))
+```
+
+A much stricter definition of the area of interest would result from using the city boundaries, which can be obtained using `urban_areas()`:
+```{r}
+phoenix_city <- urban_areas(year = 2020) |> 
+  filter(str_detect(NAME10, "Phoenix--Mesa"))
+```
+
+Plot:
+```{r}
 ggplot() +
-  geom_sf(data = "phoenixtracts", aes = (fill = estimate))
+  geom_sf(data = az_tracts,
+          fill = "lightgrey") +
+  geom_sf(data = phoenix_cbsa,
+          color = "red",
+          fill = NA) +
+  geom_sf(data = az_city,
+          color = "blue",
+          fill = NA) +
+  theme_minimal()
+```
 
-# https://walker-data.com/census-r/mapping-census-data-with-r.html
-  
-#                         cbsa = "Phoenix",
+Perhaps select all urban tracts within Phoenix CBSA? First select all urban areas in Phoenix CBSA:
+```{r}
+phoenix_urban <- st_filter(az_city, phoenix_cbsa)
+```
 
-# phoenixtracts <- get_decennial(geography = "tract",
-#                          variables = "H1_001N",
-#                          state = "Arizona",
-#                        year = 2020,
-#                        geometry = TRUE
-#)
+Plot:
+```{r}
+ggplot() +
+  geom_sf(data = phoenix_cbsa,
+          fill = "lightgray") +
+  geom_sf(data = phoenix_urban,
+          color = "blue",
+          fill = NA) +
+  theme_minimal()
+```
+
+Notice that there is a big urban area that is mostly outside of the Phoenix CBSA (Tucson). This will need to be removed. 
+
+```{r}
+phoenix_urban <- phoenix_urban |>
+  filter(!str_detect(NAME10, "Tucson"))
+```
+
+Verify:
+```{r}
+ggplot() +
+  geom_sf(data = phoenix_cbsa,
+          fill = "lightgray") +
+  geom_sf(data = phoenix_urban,
+          color = "blue",
+          fill = NA) +
+  theme_minimal()
+```
+
+Obtain the tracts:
+```{r}
+phoenix_tracts <- az_tracts |>
+  st_intersection(phoenix_urban)
+```
+
+Plot:
+```{r}
+ggplot() +
+  geom_sf(data = phoenix_cbsa,
+          fill = "lightgray") +
+  geom_sf(data = phoenix_tracts,
+          color = "blue",
+          fill = NA) +
+  theme_minimal()
+```
+
+## Geohashes
+
+Use the centroid of Phoenix CBSA to obtain h3 polygons:
+```{r}
+coords <- st_centroid(phoenix_cbsa) |>
+  st_coordinates()
+```
+
+
+Retrieve h3 geohashing at a fairly high resolution to identify Hamilton; the coordinates are for the City of Hamilton:
+```{r}
+phoenix_h3 <- geo_to_h3(c(coords[2], coords[1]),
+                        res = 3) |>
+  k_ring(radius = 1)
+```
+
+Plot the geohash retrieved in this way:
+```{r}
+ggplot() + 
+  geom_sf(data = h3_to_geo_boundary_sf(phoenix_h3),
+          aes(fill = h3_index)) +
+  geom_sf(data = phoenix_cbsa,
+          color = "red",
+          fill = NA) +
+  geom_sf(data = phoenix_urban,
+          color = "blue",
+          fill = NA) +
+  theme_minimal()
+```
+
+Keep only the h3 indices that overlap with urban Phoenix:
+```{r}
+phoenix_h3 = c("8348e9fffffffff", "8348e8fffffffff", "8348ebfffffffff", "8329b6fffffffff")
+```
+
+Plot kept indices:
+```{r}
+ggplot() + 
+  geom_sf(data = h3_to_geo_boundary_sf(phoenix_h3),
+          aes(fill = h3_index)) +
+  geom_sf(data = phoenix_cbsa,
+          color = "red",
+          fill = NA) +
+  geom_sf(data = phoenix_urban,
+          color = "blue",
+          fill = NA) +
+  theme_minimal()
+```
+
+Obtain children at a higher resolution:
+```{r}
+phoenix_h3 <- phoenix_h3 |> 
+  purrr::map(\(x) h3_to_children(x, res = 8)) |>
+  unlist()
+```
+
+Choose only hexagons that touch urban Phoenix:
+```{r}
+phoenix_h3 <- h3_to_geo_boundary_sf(phoenix_h3) |>
+  st_transform(crs = st_crs(phoenix_urban)) |>
+  st_intersection(phoenix_urban)
+
+phoenix_h3 <- phoenix_h3 |> 
+  pull(h3_index)
+```
+
+Plot:
+```{r}
+ggplot() + 
+  geom_sf(data = h3_to_geo_boundary_sf(phoenix_h3)) +
+  geom_sf(data = phoenix_cbsa,
+          color = "red",
+          fill = NA) +
+  geom_sf(data = phoenix_urban,
+          color = "blue",
+          fill = NA) +
+  theme_minimal()
+```
+
+Currently this is resolution 8:
+```{r}
+h3_get_resolution(phoenix_h3)
+```
+
+Obtain children at resolution 13 (average area is 43.87 $m^2$):
+```{r}
+phoenix_h3 <- phoenix_h3 |> 
+  purrr::map(\(x) h3_to_children(x, res = 13)) |>
+  unlist()
+```
+
+Check the size of an h3 hexagon:
+```{r}
+sample_h3 <- h3_to_geo_boundary_sf(phoenix_h3[1]) 
+
+sample_h3 |> 
+  mutate(area = st_area(geometry))
+```
+
+Information about housing characteristics. Explore the tables [here](https://data.census.gov/advanced?q=Housing) to get a sense of the variables that might be interesting to date the housing stock. For example, a search within the topic of "housing" shows that there is a set of variables with "physical characteristics". The keywords for age of housing stock are "year" and "structure". Next, use {tidycensus} to explore the variables available:
+```{r}
+v17 <- load_variables(2022, 
+                      "acs5",
+                      cache = TRUE)
+
+
+v17 |> 
+  filter(str_detect(concept, "Year") & str_detect(concept, "Structure"))
+```
+
+Refine the search:
+```{r}
+v17 |> 
+  filter(str_detect(label, "Estimate!!Total:!!Built"))
 ```
 
 ```{r}
-
-
+housing_block_group <- get_acs(geography = "cbg",
+                               state = "AZ",
+                               variables = v17 |> 
+                                 filter(str_detect(label, "Estimate!!Total:!!Built")) |>
+                                 pull(name),
+                               year = 2022,
+                               geometry = TRUE)
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+Filter by urban Phoenix
+```{r}
+housing_block_group <- housing_block_group |>
+  st_intersection(phoenix_urban)
+```
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+The proportion of buildings built during certain periods could be a good indicator of post-war suburban development.
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+Save data objects:
+```{r}
+# Tracts
+save(phoenix_tracts, 
+     file = glue::glue(here::here(),
+                       "/data-raw/phoenix_tracts.rda"),
+     compress = "bzip2")
+# Urban boundaries
+save(phoenix_urban, 
+     file = glue::glue(here::here(),
+                       "/data-raw/phoenix_urban.rda"),
+     compress = "bzip2")
+# CBSA boundary
+save(phoenix_cbsa, 
+     file = glue::glue(here::here(),
+                       "/data-raw/phoenix_cbsa.rda"),
+     compress = "bzip2")
+
+# h3 identifiers from which the coordinates can be retrieved for routing
+save(phoenix_h3,
+     file = glue::glue(here::here(),
+                       "/data-raw/phoenix_h3.rda"),
+     compress = "bzip2")
+
+# h3 identifiers from which the coordinates can be retrieved for routing
+save(housing_block_group,
+     file = glue::glue(here::here(),
+                       "/data-raw/housing_block_group.rda"),
+     compress = "bzip2")
+```
+
+
+
