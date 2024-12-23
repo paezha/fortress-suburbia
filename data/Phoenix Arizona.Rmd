@@ -3,13 +3,20 @@ title: "Phoenix Arizona"
 output: html_notebook
 ---
 
+# Phoenix Arizona Data
+
 This will be all the work for the Phoenix, Arizona data (one of the 5 selected cities used as part of this thesis work).
 
+Estimated time to run: 8 min
+
 Load packages:
+
 ```{r}
 #library(ggmap)
+library(ggplot2)
 library(glue) # Interpreted String Literals
-library (h3)
+library(h3)
+# library (h3forr)
 library(here) # A Simpler Way to Find Your Files
 library(osmdata) # package for working with streets
 library(sf) # Simple Features for R
@@ -40,19 +47,22 @@ az_city <- urban_areas(year = 2020) |>
   filter(str_detect(NAME10, "AZ"))
 ```
 
-A [core-based statistical area](https://en.wikipedia.org/wiki/Core-based_statistical_area) is a generous definition of the area of interest, since it contains an urban nucleus (say, Phoenix) and also all neighboring communities that are tightly integrated with it.
+A [core-based statistical area](https://en.wikipedia.org/wiki/Core-based_statistical_area) is a generous definition of the area of interest, since it contains an urban nucleus (say, Phoenix) and also all neighboring communities that are tightly integrated with it. It is important to note that some of the neighboring communities share boundaries with the urban nucleus, but some are disconnected.
+
 ```{r}
 phoenix_cbsa <- core_based_statistical_areas(year = 2020) |>
   filter(str_detect(NAME, "Phoenix"))
 ```
 
 A much stricter definition of the area of interest would result from using the city boundaries, which can be obtained using `urban_areas()`:
+
 ```{r}
 phoenix_city <- urban_areas(year = 2020) |> 
   filter(str_detect(NAME10, "Phoenix--Mesa"))
 ```
 
 Plot:
+
 ```{r}
 ggplot() +
   geom_sf(data = az_tracts,
@@ -67,11 +77,13 @@ ggplot() +
 ```
 
 Perhaps select all urban tracts within Phoenix CBSA? First select all urban areas in Phoenix CBSA:
+
 ```{r}
 phoenix_urban <- st_filter(az_city, phoenix_cbsa)
 ```
 
 Plot:
+
 ```{r}
 ggplot() +
   geom_sf(data = phoenix_cbsa,
@@ -82,7 +94,7 @@ ggplot() +
   theme_minimal()
 ```
 
-Notice that there is a big urban area that is mostly outside of the Phoenix CBSA (Tucson). This will need to be removed. 
+Notice that there is a big urban area that is mostly outside of the Phoenix CBSA (Tucson). This will need to be removed.
 
 ```{r}
 phoenix_urban <- phoenix_urban |>
@@ -90,6 +102,7 @@ phoenix_urban <- phoenix_urban |>
 ```
 
 Verify:
+
 ```{r}
 ggplot() +
   geom_sf(data = phoenix_cbsa,
@@ -101,12 +114,14 @@ ggplot() +
 ```
 
 Obtain the tracts:
+
 ```{r}
 phoenix_tracts <- az_tracts |>
   st_intersection(phoenix_urban)
 ```
 
 Plot:
+
 ```{r}
 ggplot() +
   geom_sf(data = phoenix_cbsa,
@@ -119,26 +134,26 @@ ggplot() +
 
 ## Geohashes
 
-Use the centroid of Phoenix CBSA to obtain h3 polygons:
+Use the centroid of Phoenix CBSA and Phoenix coordinates from OSM's website to obtain h3 polygons:
+
 ```{r}
 coords <- st_centroid(phoenix_cbsa) |>
   st_coordinates()
-```
 
+coords <- c(33.48333, -112.073889)
+```
 
 Retrieve h3 geohashing at a fairly high resolution to identify Hamilton; the coordinates are for the City of Hamilton:
-```{r}
-phoenix_h3 <- geo_to_h3(c(coords[2], coords[1]),
-                        res = 3) |>
-  k_ring(radius = 1)
-```
 
-Plot the geohash retrieved in this way:
 ```{r}
+phoenix_h3 <- geo_to_h3(c(33.48333, -112.073889),
+                             res = 4) |>
+  k_ring(1)
+
 ggplot() + 
-  geom_sf(data = h3_to_geo_boundary_sf(phoenix_h3),
+  geom_sf(data = (h3_to_geo_boundary_sf(phoenix_h3)),
           aes(fill = h3_index)) +
-  geom_sf(data = phoenix_cbsa,
+    geom_sf(data = phoenix_cbsa,
           color = "red",
           fill = NA) +
   geom_sf(data = phoenix_urban,
@@ -147,15 +162,17 @@ ggplot() +
   theme_minimal()
 ```
 
-Keep only the h3 indices that overlap with urban Phoenix:
+Keep only the h3 indices that overlap with urban Phoenix (but discard any that overlap 0-10%):
+
 ```{r}
-phoenix_h3 = c("8348e9fffffffff", "8348e8fffffffff", "8348ebfffffffff", "8329b6fffffffff")
+phoenix_h3_sf = c("8429b69ffffffff", "8448e97ffffffff", "8429b6dffffffff", "8448ebbffffffff")
 ```
 
 Plot kept indices:
+
 ```{r}
 ggplot() + 
-  geom_sf(data = h3_to_geo_boundary_sf(phoenix_h3),
+  geom_sf(data = h3_to_geo_boundary_sf(phoenix_h3_sf),
           aes(fill = h3_index)) +
   geom_sf(data = phoenix_cbsa,
           color = "red",
@@ -166,7 +183,8 @@ ggplot() +
   theme_minimal()
 ```
 
-Obtain children at a higher resolution:
+Obtain children hashes at a higher resolution (8):
+
 ```{r}
 phoenix_h3 <- phoenix_h3 |> 
   purrr::map(\(x) h3_to_children(x, res = 8)) |>
@@ -174,6 +192,7 @@ phoenix_h3 <- phoenix_h3 |>
 ```
 
 Choose only hexagons that touch urban Phoenix:
+
 ```{r}
 phoenix_h3 <- h3_to_geo_boundary_sf(phoenix_h3) |>
   st_transform(crs = st_crs(phoenix_urban)) |>
@@ -184,6 +203,7 @@ phoenix_h3 <- phoenix_h3 |>
 ```
 
 Plot:
+
 ```{r}
 ggplot() + 
   geom_sf(data = h3_to_geo_boundary_sf(phoenix_h3)) +
@@ -197,11 +217,13 @@ ggplot() +
 ```
 
 Currently this is resolution 8:
+
 ```{r}
 h3_get_resolution(phoenix_h3)
 ```
 
-Obtain children at resolution 13 (average area is 43.87 $m^2$):
+Obtain children at resolution 13 (average area is \~50.68 $m^2$):
+
 ```{r}
 phoenix_h3 <- phoenix_h3 |> 
   purrr::map(\(x) h3_to_children(x, res = 13)) |>
@@ -209,6 +231,7 @@ phoenix_h3 <- phoenix_h3 |>
 ```
 
 Check the size of an h3 hexagon:
+
 ```{r}
 sample_h3 <- h3_to_geo_boundary_sf(phoenix_h3[1]) 
 
@@ -217,6 +240,7 @@ sample_h3 |>
 ```
 
 Information about housing characteristics. Explore the tables [here](https://data.census.gov/advanced?q=Housing) to get a sense of the variables that might be interesting to date the housing stock. For example, a search within the topic of "housing" shows that there is a set of variables with "physical characteristics". The keywords for age of housing stock are "year" and "structure". Next, use {tidycensus} to explore the variables available:
+
 ```{r}
 v17 <- load_variables(2022, 
                       "acs5",
@@ -228,6 +252,7 @@ v17 |>
 ```
 
 Refine the search:
+
 ```{r}
 v17 |> 
   filter(str_detect(label, "Estimate!!Total:!!Built"))
@@ -243,7 +268,8 @@ housing_block_group <- get_acs(geography = "cbg",
                                geometry = TRUE)
 ```
 
-Filter by urban Phoenix
+Filter by urban Phoenix:
+
 ```{r}
 housing_block_group <- housing_block_group |>
   st_intersection(phoenix_urban)
@@ -252,6 +278,7 @@ housing_block_group <- housing_block_group |>
 The proportion of buildings built during certain periods could be a good indicator of post-war suburban development.
 
 Save data objects:
+
 ```{r}
 # Tracts
 save(phoenix_tracts, 
@@ -281,6 +308,3 @@ save(housing_block_group,
                        "/data-raw/housing_block_group.rda"),
      compress = "bzip2")
 ```
-
-
-
