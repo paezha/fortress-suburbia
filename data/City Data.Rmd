@@ -7,17 +7,17 @@ output: html_notebook
 
 The following cities' datas will be used for the Fortress Suburbia project:
 
-- Phoenix, Arizona (metropolitan population = ~5.1 million)
-- St. Louis, Missouri (metropolitan population = ~2.8 million)
-- Atlanta, Georgia (metropolitan population = ~6.2 million)
-- Nashville, Tennessee (metropolitan population = ~2.1 million)
-- Houston, Texas (metropolitan population = ~6.8 million)
+- Phoenix, Arizona (metropolitan population = ~5.1 million) [part 1 done]
+- Tampa, Florida (metropolitan population = ~) [part 1 done]
+- Atlanta, Georgia (metropolitan population = ~6.2 million) [NOT done]
+- Nashville, Tennessee (metropolitan population = ~2.1 million) [part 1 done]
+- Houston, Texas (metropolitan population = ~6.8 million) [part 1 done]
 
-These selected cities are:
+These selected cities:
 
-- All located in the United States.
-- All have metropolitan populations of over 2 million people as of 2024.
+- Are all located in the Sun Belt of the United States.
+- All have metropolitan populations of >2 million people as of 2024.
 - All have experienced significant urban sprawl in the last few decades.
 
-The data (streets and other amenities) for these cities will be downloaded and saved to the `data` folder. The chunks of code for running this data will be below but hidden in .html view. To access the code, open the `City Data.Rmd` file.
+The data (streets and other amenities) for these cities will be downloaded and saved to the `fortress-suburbia/data-raw` folder. The chunks of code for running this data will be below but hidden in .html view. To access the code, open the `City Data.Rmd` and individual city files.
 

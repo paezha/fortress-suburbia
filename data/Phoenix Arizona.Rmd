@@ -5,18 +5,16 @@ output: html_notebook
 
 # Phoenix Arizona Data
 
-This will be all the work for the Phoenix, Arizona data (one of the 5 selected cities used as part of this thesis work).
+This will be the h3 hash generation work for Phoenix, Arizona. The other city notebooks follow the same steps but with different sets of CBSA data.
 
-Estimated time to run: 8 min
+Estimated time to run: 1.5 hours?
 
 Load packages:
 
 ```{r}
-#library(ggmap)
 library(ggplot2)
 library(glue) # Interpreted String Literals
 library(h3)
-# library (h3forr)
 library(here) # A Simpler Way to Find Your Files
 library(osmdata) # package for working with streets
 library(sf) # Simple Features for R
@@ -61,7 +59,7 @@ phoenix_city <- urban_areas(year = 2020) |>
   filter(str_detect(NAME10, "Phoenix--Mesa"))
 ```
 
-Plot:
+Plot the location of Phoenix CBSA within Arizona and its tracts:
 
 ```{r}
 ggplot() +
@@ -76,13 +74,13 @@ ggplot() +
   theme_minimal()
 ```
 
-Perhaps select all urban tracts within Phoenix CBSA? First select all urban areas in Phoenix CBSA:
+Select all urban areas in Phoenix CBSA:
 
 ```{r}
 phoenix_urban <- st_filter(az_city, phoenix_cbsa)
 ```
 
-Plot:
+Plot urban boundaries within the Phoenix CBSA:
 
 ```{r}
 ggplot() +
@@ -94,33 +92,14 @@ ggplot() +
   theme_minimal()
 ```
 
-Notice that there is a big urban area that is mostly outside of the Phoenix CBSA (Tucson). This will need to be removed.
-
-```{r}
-phoenix_urban <- phoenix_urban |>
-  filter(!str_detect(NAME10, "Tucson"))
-```
-
-Verify:
-
-```{r}
-ggplot() +
-  geom_sf(data = phoenix_cbsa,
-          fill = "lightgray") +
-  geom_sf(data = phoenix_urban,
-          color = "blue",
-          fill = NA) +
-  theme_minimal()
-```
-
-Obtain the tracts:
+Obtain the Phoenix tracts:
 
 ```{r}
 phoenix_tracts <- az_tracts |>
   st_intersection(phoenix_urban)
 ```
 
-Plot:
+Plot Phoenix's urban tracts within the CBSA:
 
 ```{r}
 ggplot() +
@@ -134,21 +113,26 @@ ggplot() +
 
 ## Geohashes
 
-Use the centroid of Phoenix CBSA and Phoenix coordinates from OSM's website to obtain h3 polygons:
+Use the coordinates of the centroid of Phoenix CBSA to obtain h3 polygons:
 
 ```{r}
 coords <- st_centroid(phoenix_cbsa) |>
   st_coordinates()
 
-coords <- c(33.48333, -112.073889)
+print(coords)
 ```
 
-Retrieve h3 geohashing at a fairly high resolution to identify Hamilton; the coordinates are for the City of Hamilton:
+Retrieve h3 geohashing at a resolution of 4 to identify Phoenix:
 
 ```{r}
-phoenix_h3 <- geo_to_h3(c(33.48333, -112.073889),
+phoenix_h3 <- geo_to_h3(c(33.18616, -112.06910),
                              res = 4) |>
-  k_ring(1)
+
+# nashville coordinates were taken from the generated coords in the chunk above (but the order is reversed) and are kept at 5 decimal points.
+  
+    k_ring(4)
+
+# k_ring sets the number of h3 rings to generate around the initial h3 point, typically 2 or 3 are required depending on the CBSA. 4 are required for Phoenix to fit all urban areas within the h3 boundaries.
 
 ggplot() + 
   geom_sf(data = (h3_to_geo_boundary_sf(phoenix_h3)),
@@ -160,19 +144,24 @@ ggplot() +
           color = "blue",
           fill = NA) +
   theme_minimal()
+
+print.listof(h3_to_geo_boundary_sf(phoenix_h3))
 ```
 
 Keep only the h3 indices that overlap with urban Phoenix (but discard any that overlap 0-10%):
 
 ```{r}
-phoenix_h3_sf = c("8429b69ffffffff", "8448e97ffffffff", "8429b6dffffffff", "8448ebbffffffff")
+phoenix_h3 = c("8448e97ffffffff", "8448e95ffffffff", "8448ebbffffffff", "8429b6dffffffff", "8429b69ffffffff", "8448e83ffffffff", "8448eb9ffffffff", "8448eb1ffffffff", "8448eb3ffffffff",
+"8429b65ffffffff", "8429b6bffffffff", "8448e81ffffffff", "8448e87ffffffff", "8448e8dffffffff", "8448e85ffffffff", "8448eabffffffff")
+
+# can be done through trial and error (take all h3 codes from the generated list and remove one-by-one, or remove based on h3 numbers as they go in a spiral starting from the centroid)
 ```
 
 Plot kept indices:
 
 ```{r}
 ggplot() + 
-  geom_sf(data = h3_to_geo_boundary_sf(phoenix_h3_sf),
+  geom_sf(data = h3_to_geo_boundary_sf(phoenix_h3),
           aes(fill = h3_index)) +
   geom_sf(data = phoenix_cbsa,
           color = "red",
@@ -202,7 +191,7 @@ phoenix_h3 <- phoenix_h3 |>
   pull(h3_index)
 ```
 
-Plot:
+Plot resolution 8 hashes within Phoenix:
 
 ```{r}
 ggplot() + 
@@ -222,7 +211,7 @@ Currently this is resolution 8:
 h3_get_resolution(phoenix_h3)
 ```
 
-Obtain children at resolution 13 (average area is \~50.68 $m^2$):
+Obtain children at resolution 13 (average area is \~50.71 $m^2$):
 
 ```{r}
 phoenix_h3 <- phoenix_h3 |> 
@@ -305,6 +294,6 @@ save(phoenix_h3,
 # h3 identifiers from which the coordinates can be retrieved for routing
 save(housing_block_group,
      file = glue::glue(here::here(),
-                       "/data-raw/housing_block_group.rda"),
+                       "/data-raw/housing_block_group_az.rda"),
      compress = "bzip2")
 ```

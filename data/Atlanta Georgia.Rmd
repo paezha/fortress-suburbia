@@ -1,0 +1,295 @@
+---
+title: "Atlanta Georgia"
+output: html_notebook
+---
+
+# Atlanta Georgia Data
+
+This will be the h3 hash generation work for Atlanta, Georgia. The other city notebooks follow the same steps but with different sets of CBSA data.
+
+Estimated time to run: <7 hours (ran overnight)
+
+Load packages:
+
+```{r}
+library(ggplot2)
+library(glue) # Interpreted String Literals
+library(h3)
+library(here) # A Simpler Way to Find Your Files
+library(osmdata) # package for working with streets
+library(sf) # Simple Features for R
+library(tidycensus) # Load US Census Boundary and Attribute Data as 'tidyverse' and 'sf'-Ready Data Frames
+library(tidyverse) # Easily Install and Load the 'Tidyverse'
+library(tigris) # Load Census TIGER/Line Shapefiles
+```
+
+## Network data
+
+Download OSM data for Atlanta [here](https://download.geofabrik.de/north-america/us/georgia.html). It will be a proto-buffer file (pbf). Save under `data-raw/r5_graph`.
+
+## Census tracts
+
+Obtain the census tracts for Atlanta. Note that [{tidycensus}](https://walker-data.com/tidycensus/) function `get_decenial()` allows the selection of state and county, but not metro area or city. Check the example [here](https://walker-data.com/census-r/spatial-analysis-with-us-census-data.html#identifying-geometries-within-a-metropolitan-area) to see how to select tracts in a city.
+
+```{r}
+options(tigris_use_cache = TRUE)
+
+ga_tracts <- get_decennial(geography = "tract",
+                           variables = "H1_001N",
+                           state = "Georgia",
+                           year = 2020,
+                           geometry = TRUE
+)
+
+ga_city <- urban_areas(year = 2020) |> 
+  filter(str_detect(NAME10, "GA"))
+```
+
+A [core-based statistical area](https://en.wikipedia.org/wiki/Core-based_statistical_area) is a generous definition of the area of interest, since it contains an urban nucleus and also all neighboring communities that are tightly integrated with it. It is important to note that some of the neighboring communities share boundaries with the urban nucleus, but some are disconnected.
+
+```{r}
+atlanta_cbsa <- core_based_statistical_areas(year = 2020) |>
+  filter(str_detect(NAME, "Atlanta"))
+```
+
+A much stricter definition of the area of interest would result from using the city boundaries, which can be obtained using `urban_areas()`:
+
+```{r}
+atlanta_city <- urban_areas(year = 2020) |> 
+  filter(str_detect(NAME10, "Atlanta"))
+```
+
+Plot the location of Atlanta CBSA within Georgia and its tracts:
+
+```{r}
+ggplot() +
+  geom_sf(data = ga_tracts,
+          fill = "lightgrey") +
+  geom_sf(data = atlanta_cbsa,
+          color = "red",
+          fill = NA) +
+  geom_sf(data = ga_city,
+          color = "blue",
+          fill = NA) +
+  theme_minimal()
+```
+
+Select all urban areas in Atlanta CBSA:
+
+```{r}
+atlanta_urban <- st_filter(ga_city, atlanta_cbsa)
+```
+
+Plot urban boundaries within the Atlanta CBSA:
+
+```{r}
+ggplot() +
+  geom_sf(data = atlanta_cbsa,
+          fill = "lightgray") +
+  geom_sf(data = atlanta_urban,
+          color = "blue",
+          fill = NA) +
+  theme_minimal()
+```
+
+Obtain the Atlanta tracts:
+
+```{r}
+atlanta_tracts <- ga_tracts |>
+  st_intersection(atlanta_urban)
+```
+
+Plot Atlanta's urban tracts within the CBSA:
+
+```{r}
+ggplot() +
+  geom_sf(data = atlanta_cbsa,
+          fill = "lightgray") +
+  geom_sf(data = atlanta_tracts,
+          color = "blue",
+          fill = NA) +
+  theme_minimal()
+```
+
+## Geohashes
+
+Use the coordinates of the centroid of Atlanta CBSA to obtain h3 polygons:
+
+```{r}
+coords <- st_centroid(atlanta_cbsa) |>
+  st_coordinates()
+
+print(coords)
+```
+
+Retrieve h3 geohashing at a fairly high resolution to identify Houston:
+
+```{r}
+atlanta_h3 <- geo_to_h3(c(rev(coords)),
+                             res = 4) |>
+  k_ring(3)
+
+# k_ring sets the number of h3 rings to generate around the initial h3 point, typically 2 or 3 are required depending on the CBSA.
+
+ggplot() + 
+  geom_sf(data = (h3_to_geo_boundary_sf(atlanta_h3)),
+          aes(fill = h3_index)) +
+    geom_sf(data = atlanta_cbsa,
+          color = "red",
+          fill = NA) +
+  geom_sf(data = atlanta_urban,
+          color = "blue",
+          fill = NA) +
+  theme_minimal()
+
+print.listof(h3_to_geo_boundary_sf(atlanta_h3))
+```
+
+Keep only the h3 indices that overlap with urban Atlanta (but discard any that overlap 0-10%):
+
+```{r}
+atlanta_h3 = c("8444c1bffffffff", "8444c19ffffffff", "8444c11ffffffff", "8444c13ffffffff", "8444ccdffffffff", "8444ea7ffffffff", "8444ea5ffffffff", "8444c53ffffffff", "8444c57ffffffff", "8444c1dffffffff", "8444c15ffffffff", "8444c17ffffffff", "8444ce9ffffffff", "8444cc5ffffffff", "8444cc1ffffffff", "8444ea1ffffffff", "8444cedffffffff")
+```
+
+Plot kept indices:
+
+```{r}
+ggplot() + 
+  geom_sf(data = h3_to_geo_boundary_sf(atlanta_h3),
+          aes(fill = h3_index)) +
+  geom_sf(data = atlanta_cbsa,
+          color = "red",
+          fill = NA) +
+  geom_sf(data = atlanta_urban,
+          color = "blue",
+          fill = NA) +
+  theme_minimal()
+```
+
+Obtain children hashes at a higher resolution (8):
+
+```{r}
+atlanta_h3 <- atlanta_h3 |> 
+  purrr::map(\(x) h3_to_children(x, res = 8)) |>
+  unlist()
+```
+
+Choose only hexagons that touch urban Atlanta:
+
+```{r}
+atlanta_h3 <- h3_to_geo_boundary_sf(atlanta_h3) |>
+  st_transform(crs = st_crs(atlanta_urban)) |>
+  st_intersection(atlanta_urban)
+
+atlanta_h3 <- atlanta_h3 |> 
+  pull(h3_index)
+```
+
+Plot resolution 8 hashes within Atlanta:
+
+```{r}
+ggplot() + 
+  geom_sf(data = h3_to_geo_boundary_sf(atlanta_h3)) +
+  geom_sf(data = atlanta_cbsa,
+          color = "red",
+          fill = NA) +
+  geom_sf(data = atlanta_urban,
+          color = "blue",
+          fill = NA) +
+  theme_minimal()
+```
+
+Currently this is resolution 8:
+
+```{r}
+h3_get_resolution(atlanta_h3)
+```
+
+Obtain children at resolution 13 (average area is \~49.13 $m^2$):
+
+```{r}
+atlanta_h3 <- atlanta_h3 |> 
+  purrr::map(\(x) h3_to_children(x, res = 13)) |>
+  unlist()
+```
+
+Check the size of an h3 hexagon:
+
+```{r}
+sample_h3 <- h3_to_geo_boundary_sf(atlanta_h3[1]) 
+
+sample_h3 |> 
+  mutate(area = st_area(geometry))
+```
+
+Information about housing characteristics. Explore the tables [here](https://data.census.gov/advanced?q=Housing) to get a sense of the variables that might be interesting to date the housing stock. For example, a search within the topic of "housing" shows that there is a set of variables with "physical characteristics". The keywords for age of housing stock are "year" and "structure". Next, use {tidycensus} to explore the variables available:
+
+```{r}
+v17 <- load_variables(2022, 
+                      "acs5",
+                      cache = TRUE)
+
+
+v17 |> 
+  filter(str_detect(concept, "Year") & str_detect(concept, "Structure"))
+```
+
+Refine the search:
+
+```{r}
+v17 |> 
+  filter(str_detect(label, "Estimate!!Total:!!Built"))
+```
+
+```{r}
+housing_block_group_ga <- get_acs(geography = "cbg",
+                               state = "GA",
+                               variables = v17 |> 
+                                 filter(str_detect(label, "Estimate!!Total:!!Built")) |>
+                                 pull(name),
+                               year = 2022,
+                               geometry = TRUE)
+
+#trying to add "state = c("AZ", "TX", "TN", "GA", "LA")" did not work, so I am making all the housing block groups separate.
+```
+
+Filter by urban Atlanta:
+
+```{r}
+housing_block_group_ga <- housing_block_group_ga |>
+  st_intersection(atlanta_urban)
+```
+
+The proportion of buildings built during certain periods could be a good indicator of post-war suburban development.
+
+Save data objects:
+
+```{r}
+# Tracts
+save(atlanta_tracts, 
+     file = glue::glue(here::here(),
+                       "/data-raw/atlanta_tracts.rda"),
+     compress = "bzip2")
+# Urban boundaries
+save(atlanta_urban, 
+     file = glue::glue(here::here(),
+                       "/data-raw/atlanta_urban.rda"),
+     compress = "bzip2")
+# CBSA boundary
+save(atlanta_cbsa, 
+     file = glue::glue(here::here(),
+                       "/data-raw/atlanta_cbsa.rda"),
+     compress = "bzip2")
+
+# h3 identifiers from which the coordinates can be retrieved for routing
+save(atlanta_h3,
+     file = glue::glue(here::here(),
+                       "/data-raw/atlanta_h3.rda"),
+     compress = "bzip2")
+
+# h3 identifiers from which the coordinates can be retrieved for routing
+save(housing_block_group_ga,
+     file = glue::glue(here::here(),
+                       "/data-raw/housing_block_group_ga.rda"),
+     compress = "bzip2")
+```

@@ -1,0 +1,204 @@
+---
+title: "Removed Sections"
+output: html_notebook
+---
+
+This notebook will contain sections removed from the city data notebooks found in `fortress-suburbia/data`. They are saved here in case they can be used in the future if/when deemed necessary.
+
+# Previous Code for Removing Areas Disconnected from the Core Regions of the CBSAs:
+
+## Phoenix, Arizona
+
+Notice that there is a big urban area that is mostly outside of the Phoenix CBSA (Tucson). This will need to be removed.
+
+```{r}
+phoenix_urban <- phoenix_urban |>
+  filter(!str_detect(NAME10, "Tucson"))
+```
+
+Verify:
+
+```{r}
+ggplot() +
+  geom_sf(data = phoenix_cbsa,
+          fill = "lightgray") +
+  geom_sf(data = phoenix_urban,
+          color = "blue",
+          fill = NA) +
+  theme_minimal()
+```
+
+## Houston, Texas
+
+Notice that there is a small urban area that is south of the Houston CBSA (Lake Jackson), and small locations west of Houston (Prairie View, Pine Island, Hempstead). This will need to be removed.
+
+```{r}
+houston_urban <- houston_urban |>
+  filter (!str_detect(NAME10, "Lake Jackson")) 
+
+houston_urban <- houston_urban |>
+  filter (!str_detect(NAME10, "Prairie View")) 
+
+houston_urban <- houston_urban |>
+  filter (!str_detect(NAME10, "Pine Island")) 
+
+houston_urban <- houston_urban |>
+  filter (!str_detect(NAME10, "Hempstead")) 
+
+# Was unable to complete this within one filter line of code.
+```
+
+Verify:
+
+```{r}
+ggplot() +
+  geom_sf(data = houston_cbsa,
+          fill = "lightgray") +
+  geom_sf(data = houston_urban,
+          color = "blue",
+          fill = NA) +
+  theme_minimal()
+```
+
+## Atlanta, Georgia:
+
+Notice that there are a few urban areas outside of Atlanta's boundaries. These will need to be removed.
+
+```{r}
+atlanta_urban <- atlanta_urban |>
+  filter (!str_detect(NAME10, "Calhoun")) 
+
+atlanta_urban <- atlanta_urban |>
+  filter (!str_detect(NAME10, "Cartersville")) 
+
+atlanta_urban <- atlanta_urban |>
+  filter (!str_detect(NAME10, "Jasper")) 
+
+atlanta_urban <- atlanta_urban |>
+  filter (!str_detect(NAME10, "Nelson")) 
+
+atlanta_urban <- atlanta_urban |>
+  filter (!str_detect(NAME10, "Yorkville")) 
+
+atlanta_urban <- atlanta_urban |>
+  filter (!str_detect(NAME10, "Carrollton")) 
+
+atlanta_urban <- atlanta_urban |>
+  filter (!str_detect(NAME10, "Bremen")) 
+
+atlanta_urban <- atlanta_urban |>
+  filter (!str_detect(NAME10, "Grantville")) 
+
+atlanta_urban <- atlanta_urban |>
+  filter (!str_detect(NAME10, "Shiloh")) 
+
+atlanta_urban <- atlanta_urban |>
+  filter (!str_detect(NAME10, "Manchester")) 
+
+atlanta_urban <- atlanta_urban |>
+  filter (!str_detect(NAME10, "Barnesville")) 
+
+atlanta_urban <- atlanta_urban |>
+  filter (!str_detect(NAME10, "Jackson")) 
+
+atlanta_urban <- atlanta_urban |>
+  filter (!str_detect(NAME10, "Monticello")) 
+
+atlanta_urban <- atlanta_urban |>
+  filter (!str_detect(NAME10, "Social Circle"))
+
+atlanta_urban <- atlanta_urban |>
+  filter (!str_detect(NAME10, "Madison")) 
+
+# Was unable to complete this within one filter line of code.
+```
+
+Verify:
+
+```{r}
+ggplot() +
+  geom_sf(data = atlanta_cbsa,
+          fill = "lightgray") +
+  geom_sf(data = atlanta_urban,
+          color = "blue",
+          fill = NA) +
+  theme_minimal()
+```
+
+## Nashville, Tennessee:
+
+The small areas outside of the core Nashville area have to be removed. 
+
+```{r}
+nashville_urban <- nashville_urban |>
+  filter (!str_detect(NAME10, "Dickson")) 
+
+nashville_urban <- nashville_urban |>
+  filter (!str_detect(NAME10, "Fairview")) 
+
+nashville_urban <- nashville_urban |>
+  filter (!str_detect(NAME10, "Columbia")) 
+
+nashville_urban <- nashville_urban |>
+  filter (!str_detect(NAME10, "Spring Hill")) 
+
+nashville_urban <- nashville_urban |>
+  filter (!str_detect(NAME10, "Mount Pleasant")) 
+
+nashville_urban <- nashville_urban |>
+  filter (!str_detect(NAME10, "Columbia")) 
+
+nashville_urban <- nashville_urban |>
+  filter (!str_detect(NAME10, "Barfield")) 
+
+nashville_urban <- nashville_urban |>
+  filter (!str_detect(NAME10, "Ashland City")) 
+
+nashville_urban <- nashville_urban |>
+  filter (!str_detect(NAME10, "Pleasant View")) 
+
+nashville_urban <- nashville_urban |>
+  filter (!str_detect(NAME10, "Lebanon")) 
+
+nashville_urban <- nashville_urban |>
+  filter (!str_detect(NAME10, "Portland")) 
+
+nashville_urban <- nashville_urban |>
+  filter (!str_detect(NAME10, "Murfreesboro")) #big blob
+
+nashville_urban <- nashville_urban |>
+  filter (!str_detect(NAME10, "Woodbury")) 
+
+nashville_urban <- nashville_urban |>
+  filter (!str_detect(NAME10, "Columbia")) 
+
+nashville_urban <- nashville_urban |>
+  filter (!str_detect(NAME10, "Carthage")) 
+
+nashville_urban <- nashville_urban |>
+  filter (!str_detect(NAME10, "Lafayette")) 
+
+nashville_urban <- nashville_urban |>
+  filter (!str_detect(NAME10, "Springfield")) 
+
+nashville_urban <- nashville_urban |>
+  filter (!str_detect(NAME10, "White House"))  # ????????
+
+# Was unable to complete this within one filter line of code.
+
+# areas that connect by simply a line were also removed to ensure the h3 hashes worked more efficiently
+
+# the location at ~36.4N, 86.8W (Greenbier & Ridegtop) were not possible to remove
+```
+
+Verify:
+
+```{r}
+ggplot() +
+  geom_sf(data = nashville_cbsa,
+          fill = "lightgray") +
+  geom_sf(data = nashville_urban,
+          color = "blue",
+          fill = NA) +
+  theme_minimal()
+```

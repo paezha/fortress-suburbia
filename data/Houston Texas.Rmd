@@ -1,0 +1,300 @@
+---
+title: "Houston Texas"
+output: html_notebook
+---
+
+# Houson Texas Data
+
+This will be the h3 hash generation work for Houston, Texas. The other city notebooks follow the same steps but with different sets of CBSA data.
+
+Estimated time to run: 5 hours
+
+Load packages:
+
+```{r}
+library(ggplot2)
+library(glue) # Interpreted String Literals
+library(h3)
+library(here) # A Simpler Way to Find Your Files
+library(osmdata) # package for working with streets
+library(sf) # Simple Features for R
+library(tidycensus) # Load US Census Boundary and Attribute Data as 'tidyverse' and 'sf'-Ready Data Frames
+library(tidyverse) # Easily Install and Load the 'Tidyverse'
+library(tigris) # Load Census TIGER/Line Shapefiles
+```
+
+## Network data
+
+Download OSM data for Houston [here](https://download.geofabrik.de/north-america/us/texas.html). It will be a proto-buffer file (pbf). Save under `data-raw/r5_graph`. (These files might not be visible on GitHub.)
+
+## Census tracts
+
+Obtain the census tracts for Houston. Note that [{tidycensus}](https://walker-data.com/tidycensus/) function `get_decenial()` allows the selection of state and county, but not metro area or city. Check the example [here](https://walker-data.com/census-r/spatial-analysis-with-us-census-data.html#identifying-geometries-within-a-metropolitan-area) to see how to select tracts in a city.
+
+```{r}
+options(tigris_use_cache = TRUE)
+
+tx_tracts <- get_decennial(geography = "tract",
+                           variables = "H1_001N",
+                           state = "Texas",
+                           year = 2020,
+                           geometry = TRUE
+)
+
+tx_city <- urban_areas(year = 2020) |> 
+  filter(str_detect(NAME10, "TX"))
+```
+
+A [core-based statistical area](https://en.wikipedia.org/wiki/Core-based_statistical_area) is a generous definition of the area of interest, since it contains an urban nucleus and also all neighboring communities that are tightly integrated with it. It is important to note that some of the neighboring communities share boundaries with the urban nucleus, but some are disconnected.
+
+```{r}
+houston_cbsa <- core_based_statistical_areas(year = 2020) |>
+  filter(str_detect(NAME, "Houston"))
+```
+
+A much stricter definition of the area of interest would result from using the city boundaries, which can be obtained using `urban_areas()`:
+
+```{r}
+houston_city <- urban_areas(year = 2020) |> 
+  filter(str_detect(NAME10, "Houston"))
+```
+
+Plot the location of Houston CBSA within Texas and its tracts:
+
+```{r}
+ggplot() +
+  geom_sf(data = tx_tracts,
+          fill = "lightgrey") +
+  geom_sf(data = houston_cbsa,
+          color = "red",
+          fill = NA) +
+  geom_sf(data = tx_city,
+          color = "blue",
+          fill = NA) +
+  theme_minimal()
+```
+
+Select all urban areas in Houston CBSA:
+
+```{r}
+houston_urban <- st_filter(tx_city, houston_cbsa)
+```
+
+Plot urban boundaries within the Houston CBSA:
+
+```{r}
+ggplot() +
+  geom_sf(data = houston_cbsa,
+          fill = "lightgray") +
+  geom_sf(data = houston_urban,
+          color = "blue",
+          fill = NA) +
+  theme_minimal()
+```
+
+
+Obtain the Houston tracts:
+
+```{r}
+houston_tracts <- tx_tracts |>
+  st_intersection(houston_urban)
+```
+
+Plot Houston's urban tracts within the CBSA:
+
+```{r}
+ggplot() +
+  geom_sf(data = houston_cbsa,
+          fill = "lightgray") +
+  geom_sf(data = houston_tracts,
+          color = "blue",
+          fill = NA) +
+  theme_minimal()
+```
+
+## Geohashes
+
+Use the coordinates of the centroid of Houston CBSA to obtain h3 polygons:
+
+```{r}
+coords <- st_centroid(houston_cbsa) |>
+  st_coordinates()
+
+print(coords)
+
+print(rev(coords))
+```
+
+Retrieve h3 geohashing at a fairly high resolution to identify Houston:
+
+```{r}
+houston_h3 <- geo_to_h3(c(rev(coords)),
+                             res = 4) |>
+  k_ring(3)
+
+# k_ring sets the number of h3 rings to generate around the initial h3 point, typically 2 or 3 are required depending on the CBSA.
+
+ggplot() + 
+  geom_sf(data = (h3_to_geo_boundary_sf(houston_h3)),
+          aes(fill = h3_index)) +
+    geom_sf(data = houston_cbsa,
+          color = "red",
+          fill = NA) +
+  geom_sf(data = houston_urban,
+          color = "blue",
+          fill = NA) +
+  theme_minimal()
+
+print.listof(h3_to_geo_boundary_sf(houston_h3))
+```
+
+Keep only the h3 indices that overlap with urban Houston (but discard any that overlap 0-10%):
+
+```{r}
+houston_h3 = c("84446cbffffffff", "84446c9ffffffff", "84446c1ffffffff", "84446c3ffffffff", "84446ddffffffff", "8448937ffffffff", "8448935ffffffff", "8448923ffffffff", "84446cdffffffff", "84446c5ffffffff", "84446c7ffffffff", "8444689ffffffff", "84446d5ffffffff", "84446d9ffffffff", "84446ebffffffff")
+
+# can be done through trial and error (take all h3 codes from the generated list and remove one-by-one, or remove based on h3 numbers as they go in a spiral starting from the centroid)
+```
+
+Plot kept indices:
+
+```{r}
+ggplot() + 
+  geom_sf(data = h3_to_geo_boundary_sf(houston_h3),
+          aes(fill = h3_index)) +
+  geom_sf(data = houston_cbsa,
+          color = "red",
+          fill = NA) +
+  geom_sf(data = houston_urban,
+          color = "blue",
+          fill = NA) +
+  theme_minimal()
+```
+
+Obtain children hashes at a higher resolution (8):
+
+```{r}
+houston_h3 <- houston_h3 |> 
+  purrr::map(\(x) h3_to_children(x, res = 8)) |>
+  unlist()
+```
+
+Choose only hexagons that touch urban Houston:
+
+```{r}
+houston_h3 <- h3_to_geo_boundary_sf(houston_h3) |>
+  st_transform(crs = st_crs(houston_urban)) |>
+  st_intersection(houston_urban)
+
+houston_h3 <- houston_h3 |> 
+  pull(h3_index)
+```
+
+Plot resolution 8 hashes within Houston:
+
+```{r}
+ggplot() + 
+  geom_sf(data = h3_to_geo_boundary_sf(houston_h3)) +
+  geom_sf(data = houston_cbsa,
+          color = "red",
+          fill = NA) +
+  geom_sf(data = houston_urban,
+          color = "blue",
+          fill = NA) +
+  theme_minimal()
+```
+
+Currently this is resolution 8:
+
+```{r}
+h3_get_resolution(houston_h3)
+```
+
+Obtain children at resolution 13 (average area is \~49.47 $m^2$):
+
+```{r}
+houston_h3 <- houston_h3 |> 
+  purrr::map(\(x) h3_to_children(x, res = 13)) |>
+  unlist()
+```
+
+Check the size of an h3 hexagon:
+
+```{r}
+sample_h3 <- h3_to_geo_boundary_sf(houston_h3[1]) 
+
+sample_h3 |> 
+  mutate(area = st_area(geometry))
+```
+
+Information about housing characteristics. Explore the tables [here](https://data.census.gov/advanced?q=Housing) to get a sense of the variables that might be interesting to date the housing stock. For example, a search within the topic of "housing" shows that there is a set of variables with "physical characteristics". The keywords for age of housing stock are "year" and "structure". Next, use {tidycensus} to explore the variables available:
+
+```{r}
+v17 <- load_variables(2022, 
+                      "acs5",
+                      cache = TRUE)
+
+
+v17 |> 
+  filter(str_detect(concept, "Year") & str_detect(concept, "Structure"))
+```
+
+Refine the search:
+
+```{r}
+v17 |> 
+  filter(str_detect(label, "Estimate!!Total:!!Built"))
+```
+
+```{r}
+housing_block_group_tx <- get_acs(geography = "cbg",
+                               state = "TX",
+                               variables = v17 |> 
+                                 filter(str_detect(label, "Estimate!!Total:!!Built")) |>
+                                 pull(name),
+                               year = 2022,
+                               geometry = TRUE)
+
+#trying to add "state = c("AZ", "TX", "TN", "GE", "LA")" did not work, so I am making all the housing block groups separate.
+```
+
+Filter by urban Houston:
+
+```{r}
+housing_block_group_tx <- housing_block_group_tx |>
+  st_intersection(houston_urban)
+```
+
+The proportion of buildings built during certain periods could be a good indicator of post-war suburban development.
+
+Save data objects:
+
+```{r}
+# Tracts
+save(houston_tracts, 
+     file = glue::glue(here::here(),
+                       "/data-raw/houston_tracts.rda"),
+     compress = "bzip2")
+# Urban boundaries
+save(houston_urban, 
+     file = glue::glue(here::here(),
+                       "/data-raw/houston_urban.rda"),
+     compress = "bzip2")
+# CBSA boundary
+save(houston_cbsa, 
+     file = glue::glue(here::here(),
+                       "/data-raw/houston_cbsa.rda"),
+     compress = "bzip2")
+
+# h3 identifiers from which the coordinates can be retrieved for routing
+save(houston_h3,
+     file = glue::glue(here::here(),
+                       "/data-raw/houston_h3.rda"),
+     compress = "bzip2")
+
+# h3 identifiers from which the coordinates can be retrieved for routing
+save(housing_block_group_tx,
+     file = glue::glue(here::here(),
+                       "/data-raw/housing_block_group_tx.rda"),
+     compress = "bzip2")
+```

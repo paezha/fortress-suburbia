@@ -11,7 +11,7 @@
 
 
 
-<title>City Data</title>
+<title>Removed Sections</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -1746,44 +1746,242 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">City Data</h1>
+<h1 class="title toc-ignore">Removed Sections</h1>
 
 </div>
 
 
 <!-- rnb-text-begin -->
-<div id="selected-cities" class="section level2">
-<h2>Selected Cities</h2>
-<p>The following cities’ datas will be used for the Fortress Suburbia
-project:</p>
-<ul>
-<li>Phoenix, Arizona (metropolitan population = ~5.1 million) [part 1
-done]</li>
-<li>Tampa, Florida (metropolitan population = ~) [part 1 done]</li>
-<li>Atlanta, Georgia (metropolitan population = ~6.2 million) [NOT
-done]</li>
-<li>Nashville, Tennessee (metropolitan population = ~2.1 million) [part
-1 done]</li>
-<li>Houston, Texas (metropolitan population = ~6.8 million) [part 1
-done]</li>
-</ul>
-<p>These selected cities:</p>
-<ul>
-<li>Are all located in the Sun Belt of the United States.</li>
-<li>All have metropolitan populations of &gt;2 million people as of
-2024.</li>
-<li>All have experienced significant urban sprawl in the last few
-decades.</li>
-</ul>
-<p>The data (streets and other amenities) for these cities will be
-downloaded and saved to the <code>fortress-suburbia/data-raw</code>
-folder. The chunks of code for running this data will be below but
-hidden in .html view. To access the code, open the
-<code>City Data.Rmd</code> and individual city files.</p>
+<p>This notebook will contain sections removed from the city data
+notebooks found in <code>fortress-suburbia/data</code>. They are saved
+here in case they can be used in the future if/when deemed
+necessary.</p>
+<div id="previous-code-for-removing-areas-disconnected-from-the-core-regions-of-the-cbsas" class="section level1">
+<h1>Previous Code for Removing Areas Disconnected from the Core Regions
+of the CBSAs:</h1>
+<div id="phoenix-arizona" class="section level2">
+<h2>Phoenix, Arizona</h2>
+<p>Notice that there is a big urban area that is mostly outside of the
+Phoenix CBSA (Tucson). This will need to be removed.</p>
 <!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGhvZW5peF91cmJhbiA8LSBwaG9lbml4X3VyYmFuIHw+XG4gIGZpbHRlcighc3RyX2RldGVjdChOQU1FMTAsIFwiVHVjc29uXCIpKVxuYGBgIn0= -->
+<pre class="r"><code>phoenix_urban &lt;- phoenix_urban |&gt;
+  filter(!str_detect(NAME10, &quot;Tucson&quot;))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Verify:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90KCkgK1xuICBnZW9tX3NmKGRhdGEgPSBwaG9lbml4X2Nic2EsXG4gICAgICAgICAgZmlsbCA9IFwibGlnaHRncmF5XCIpICtcbiAgZ2VvbV9zZihkYXRhID0gcGhvZW5peF91cmJhbixcbiAgICAgICAgICBjb2xvciA9IFwiYmx1ZVwiLFxuICAgICAgICAgIGZpbGwgPSBOQSkgK1xuICB0aGVtZV9taW5pbWFsKClcbmBgYCJ9 -->
+<pre class="r"><code>ggplot() +
+  geom_sf(data = phoenix_cbsa,
+          fill = &quot;lightgray&quot;) +
+  geom_sf(data = phoenix_urban,
+          color = &quot;blue&quot;,
+          fill = NA) +
+  theme_minimal()</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="houston-texas" class="section level2">
+<h2>Houston, Texas</h2>
+<p>Notice that there is a small urban area that is south of the Houston
+CBSA (Lake Jackson), and small locations west of Houston (Prairie View,
+Pine Island, Hempstead). This will need to be removed.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaG91c3Rvbl91cmJhbiA8LSBob3VzdG9uX3VyYmFuIHw+XG4gIGZpbHRlciAoIXN0cl9kZXRlY3QoTkFNRTEwLCBcIkxha2UgSmFja3NvblwiKSkgXG5cbmhvdXN0b25fdXJiYW4gPC0gaG91c3Rvbl91cmJhbiB8PlxuICBmaWx0ZXIgKCFzdHJfZGV0ZWN0KE5BTUUxMCwgXCJQcmFpcmllIFZpZXdcIikpIFxuXG5ob3VzdG9uX3VyYmFuIDwtIGhvdXN0b25fdXJiYW4gfD5cbiAgZmlsdGVyICghc3RyX2RldGVjdChOQU1FMTAsIFwiUGluZSBJc2xhbmRcIikpIFxuXG5ob3VzdG9uX3VyYmFuIDwtIGhvdXN0b25fdXJiYW4gfD5cbiAgZmlsdGVyICghc3RyX2RldGVjdChOQU1FMTAsIFwiSGVtcHN0ZWFkXCIpKSBcblxuIyBXYXMgdW5hYmxlIHRvIGNvbXBsZXRlIHRoaXMgd2l0aGluIG9uZSBmaWx0ZXIgbGluZSBvZiBjb2RlLlxuYGBgIn0= -->
+<pre class="r"><code>houston_urban &lt;- houston_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Lake Jackson&quot;)) 
+
+houston_urban &lt;- houston_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Prairie View&quot;)) 
+
+houston_urban &lt;- houston_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Pine Island&quot;)) 
+
+houston_urban &lt;- houston_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Hempstead&quot;)) 
+
+# Was unable to complete this within one filter line of code.</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Verify:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90KCkgK1xuICBnZW9tX3NmKGRhdGEgPSBob3VzdG9uX2Nic2EsXG4gICAgICAgICAgZmlsbCA9IFwibGlnaHRncmF5XCIpICtcbiAgZ2VvbV9zZihkYXRhID0gaG91c3Rvbl91cmJhbixcbiAgICAgICAgICBjb2xvciA9IFwiYmx1ZVwiLFxuICAgICAgICAgIGZpbGwgPSBOQSkgK1xuICB0aGVtZV9taW5pbWFsKClcbmBgYCJ9 -->
+<pre class="r"><code>ggplot() +
+  geom_sf(data = houston_cbsa,
+          fill = &quot;lightgray&quot;) +
+  geom_sf(data = houston_urban,
+          color = &quot;blue&quot;,
+          fill = NA) +
+  theme_minimal()</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="atlanta-georgia" class="section level2">
+<h2>Atlanta, Georgia:</h2>
+<p>Notice that there are a few urban areas outside of Atlanta’s
+boundaries. These will need to be removed.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYXRsYW50YV91cmJhbiA8LSBhdGxhbnRhX3VyYmFuIHw+XG4gIGZpbHRlciAoIXN0cl9kZXRlY3QoTkFNRTEwLCBcIkNhbGhvdW5cIikpIFxuXG5hdGxhbnRhX3VyYmFuIDwtIGF0bGFudGFfdXJiYW4gfD5cbiAgZmlsdGVyICghc3RyX2RldGVjdChOQU1FMTAsIFwiQ2FydGVyc3ZpbGxlXCIpKSBcblxuYXRsYW50YV91cmJhbiA8LSBhdGxhbnRhX3VyYmFuIHw+XG4gIGZpbHRlciAoIXN0cl9kZXRlY3QoTkFNRTEwLCBcIkphc3BlclwiKSkgXG5cbmF0bGFudGFfdXJiYW4gPC0gYXRsYW50YV91cmJhbiB8PlxuICBmaWx0ZXIgKCFzdHJfZGV0ZWN0KE5BTUUxMCwgXCJOZWxzb25cIikpIFxuXG5hdGxhbnRhX3VyYmFuIDwtIGF0bGFudGFfdXJiYW4gfD5cbiAgZmlsdGVyICghc3RyX2RldGVjdChOQU1FMTAsIFwiWW9ya3ZpbGxlXCIpKSBcblxuYXRsYW50YV91cmJhbiA8LSBhdGxhbnRhX3VyYmFuIHw+XG4gIGZpbHRlciAoIXN0cl9kZXRlY3QoTkFNRTEwLCBcIkNhcnJvbGx0b25cIikpIFxuXG5hdGxhbnRhX3VyYmFuIDwtIGF0bGFudGFfdXJiYW4gfD5cbiAgZmlsdGVyICghc3RyX2RldGVjdChOQU1FMTAsIFwiQnJlbWVuXCIpKSBcblxuYXRsYW50YV91cmJhbiA8LSBhdGxhbnRhX3VyYmFuIHw+XG4gIGZpbHRlciAoIXN0cl9kZXRlY3QoTkFNRTEwLCBcIkdyYW50dmlsbGVcIikpIFxuXG5hdGxhbnRhX3VyYmFuIDwtIGF0bGFudGFfdXJiYW4gfD5cbiAgZmlsdGVyICghc3RyX2RldGVjdChOQU1FMTAsIFwiU2hpbG9oXCIpKSBcblxuYXRsYW50YV91cmJhbiA8LSBhdGxhbnRhX3VyYmFuIHw+XG4gIGZpbHRlciAoIXN0cl9kZXRlY3QoTkFNRTEwLCBcIk1hbmNoZXN0ZXJcIikpIFxuXG5hdGxhbnRhX3VyYmFuIDwtIGF0bGFudGFfdXJiYW4gfD5cbiAgZmlsdGVyICghc3RyX2RldGVjdChOQU1FMTAsIFwiQmFybmVzdmlsbGVcIikpIFxuXG5hdGxhbnRhX3VyYmFuIDwtIGF0bGFudGFfdXJiYW4gfD5cbiAgZmlsdGVyICghc3RyX2RldGVjdChOQU1FMTAsIFwiSmFja3NvblwiKSkgXG5cbmF0bGFudGFfdXJiYW4gPC0gYXRsYW50YV91cmJhbiB8PlxuICBmaWx0ZXIgKCFzdHJfZGV0ZWN0KE5BTUUxMCwgXCJNb250aWNlbGxvXCIpKSBcblxuYXRsYW50YV91cmJhbiA8LSBhdGxhbnRhX3VyYmFuIHw+XG4gIGZpbHRlciAoIXN0cl9kZXRlY3QoTkFNRTEwLCBcIlNvY2lhbCBDaXJjbGVcIikpXG5cbmF0bGFudGFfdXJiYW4gPC0gYXRsYW50YV91cmJhbiB8PlxuICBmaWx0ZXIgKCFzdHJfZGV0ZWN0KE5BTUUxMCwgXCJNYWRpc29uXCIpKSBcblxuIyBXYXMgdW5hYmxlIHRvIGNvbXBsZXRlIHRoaXMgd2l0aGluIG9uZSBmaWx0ZXIgbGluZSBvZiBjb2RlLlxuYGBgIn0= -->
+<pre class="r"><code>atlanta_urban &lt;- atlanta_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Calhoun&quot;)) 
+
+atlanta_urban &lt;- atlanta_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Cartersville&quot;)) 
+
+atlanta_urban &lt;- atlanta_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Jasper&quot;)) 
+
+atlanta_urban &lt;- atlanta_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Nelson&quot;)) 
+
+atlanta_urban &lt;- atlanta_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Yorkville&quot;)) 
+
+atlanta_urban &lt;- atlanta_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Carrollton&quot;)) 
+
+atlanta_urban &lt;- atlanta_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Bremen&quot;)) 
+
+atlanta_urban &lt;- atlanta_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Grantville&quot;)) 
+
+atlanta_urban &lt;- atlanta_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Shiloh&quot;)) 
+
+atlanta_urban &lt;- atlanta_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Manchester&quot;)) 
+
+atlanta_urban &lt;- atlanta_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Barnesville&quot;)) 
+
+atlanta_urban &lt;- atlanta_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Jackson&quot;)) 
+
+atlanta_urban &lt;- atlanta_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Monticello&quot;)) 
+
+atlanta_urban &lt;- atlanta_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Social Circle&quot;))
+
+atlanta_urban &lt;- atlanta_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Madison&quot;)) 
+
+# Was unable to complete this within one filter line of code.</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Verify:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90KCkgK1xuICBnZW9tX3NmKGRhdGEgPSBhdGxhbnRhX2Nic2EsXG4gICAgICAgICAgZmlsbCA9IFwibGlnaHRncmF5XCIpICtcbiAgZ2VvbV9zZihkYXRhID0gYXRsYW50YV91cmJhbixcbiAgICAgICAgICBjb2xvciA9IFwiYmx1ZVwiLFxuICAgICAgICAgIGZpbGwgPSBOQSkgK1xuICB0aGVtZV9taW5pbWFsKClcbmBgYCJ9 -->
+<pre class="r"><code>ggplot() +
+  geom_sf(data = atlanta_cbsa,
+          fill = &quot;lightgray&quot;) +
+  geom_sf(data = atlanta_urban,
+          color = &quot;blue&quot;,
+          fill = NA) +
+  theme_minimal()</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="nashville-tennessee" class="section level2">
+<h2>Nashville, Tennessee:</h2>
+<p>The small areas outside of the core Nashville area have to be
+removed.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubmFzaHZpbGxlX3VyYmFuIDwtIG5hc2h2aWxsZV91cmJhbiB8PlxuICBmaWx0ZXIgKCFzdHJfZGV0ZWN0KE5BTUUxMCwgXCJEaWNrc29uXCIpKSBcblxubmFzaHZpbGxlX3VyYmFuIDwtIG5hc2h2aWxsZV91cmJhbiB8PlxuICBmaWx0ZXIgKCFzdHJfZGV0ZWN0KE5BTUUxMCwgXCJGYWlydmlld1wiKSkgXG5cbm5hc2h2aWxsZV91cmJhbiA8LSBuYXNodmlsbGVfdXJiYW4gfD5cbiAgZmlsdGVyICghc3RyX2RldGVjdChOQU1FMTAsIFwiQ29sdW1iaWFcIikpIFxuXG5uYXNodmlsbGVfdXJiYW4gPC0gbmFzaHZpbGxlX3VyYmFuIHw+XG4gIGZpbHRlciAoIXN0cl9kZXRlY3QoTkFNRTEwLCBcIlNwcmluZyBIaWxsXCIpKSBcblxubmFzaHZpbGxlX3VyYmFuIDwtIG5hc2h2aWxsZV91cmJhbiB8PlxuICBmaWx0ZXIgKCFzdHJfZGV0ZWN0KE5BTUUxMCwgXCJNb3VudCBQbGVhc2FudFwiKSkgXG5cbm5hc2h2aWxsZV91cmJhbiA8LSBuYXNodmlsbGVfdXJiYW4gfD5cbiAgZmlsdGVyICghc3RyX2RldGVjdChOQU1FMTAsIFwiQ29sdW1iaWFcIikpIFxuXG5uYXNodmlsbGVfdXJiYW4gPC0gbmFzaHZpbGxlX3VyYmFuIHw+XG4gIGZpbHRlciAoIXN0cl9kZXRlY3QoTkFNRTEwLCBcIkJhcmZpZWxkXCIpKSBcblxubmFzaHZpbGxlX3VyYmFuIDwtIG5hc2h2aWxsZV91cmJhbiB8PlxuICBmaWx0ZXIgKCFzdHJfZGV0ZWN0KE5BTUUxMCwgXCJBc2hsYW5kIENpdHlcIikpIFxuXG5uYXNodmlsbGVfdXJiYW4gPC0gbmFzaHZpbGxlX3VyYmFuIHw+XG4gIGZpbHRlciAoIXN0cl9kZXRlY3QoTkFNRTEwLCBcIlBsZWFzYW50IFZpZXdcIikpIFxuXG5uYXNodmlsbGVfdXJiYW4gPC0gbmFzaHZpbGxlX3VyYmFuIHw+XG4gIGZpbHRlciAoIXN0cl9kZXRlY3QoTkFNRTEwLCBcIkxlYmFub25cIikpIFxuXG5uYXNodmlsbGVfdXJiYW4gPC0gbmFzaHZpbGxlX3VyYmFuIHw+XG4gIGZpbHRlciAoIXN0cl9kZXRlY3QoTkFNRTEwLCBcIlBvcnRsYW5kXCIpKSBcblxubmFzaHZpbGxlX3VyYmFuIDwtIG5hc2h2aWxsZV91cmJhbiB8PlxuICBmaWx0ZXIgKCFzdHJfZGV0ZWN0KE5BTUUxMCwgXCJNdXJmcmVlc2Jvcm9cIikpICNiaWcgYmxvYlxuXG5uYXNodmlsbGVfdXJiYW4gPC0gbmFzaHZpbGxlX3VyYmFuIHw+XG4gIGZpbHRlciAoIXN0cl9kZXRlY3QoTkFNRTEwLCBcIldvb2RidXJ5XCIpKSBcblxubmFzaHZpbGxlX3VyYmFuIDwtIG5hc2h2aWxsZV91cmJhbiB8PlxuICBmaWx0ZXIgKCFzdHJfZGV0ZWN0KE5BTUUxMCwgXCJDb2x1bWJpYVwiKSkgXG5cbm5hc2h2aWxsZV91cmJhbiA8LSBuYXNodmlsbGVfdXJiYW4gfD5cbiAgZmlsdGVyICghc3RyX2RldGVjdChOQU1FMTAsIFwiQ2FydGhhZ2VcIikpIFxuXG5uYXNodmlsbGVfdXJiYW4gPC0gbmFzaHZpbGxlX3VyYmFuIHw+XG4gIGZpbHRlciAoIXN0cl9kZXRlY3QoTkFNRTEwLCBcIkxhZmF5ZXR0ZVwiKSkgXG5cbm5hc2h2aWxsZV91cmJhbiA8LSBuYXNodmlsbGVfdXJiYW4gfD5cbiAgZmlsdGVyICghc3RyX2RldGVjdChOQU1FMTAsIFwiU3ByaW5nZmllbGRcIikpIFxuXG5uYXNodmlsbGVfdXJiYW4gPC0gbmFzaHZpbGxlX3VyYmFuIHw+XG4gIGZpbHRlciAoIXN0cl9kZXRlY3QoTkFNRTEwLCBcIldoaXRlIEhvdXNlXCIpKSAgIyA/Pz8/Pz8/P1xuXG4jIFdhcyB1bmFibGUgdG8gY29tcGxldGUgdGhpcyB3aXRoaW4gb25lIGZpbHRlciBsaW5lIG9mIGNvZGUuXG5cbiMgYXJlYXMgdGhhdCBjb25uZWN0IGJ5IHNpbXBseSBhIGxpbmUgd2VyZSBhbHNvIHJlbW92ZWQgdG8gZW5zdXJlIHRoZSBoMyBoYXNoZXMgd29ya2VkIG1vcmUgZWZmaWNpZW50bHlcblxuIyB0aGUgbG9jYXRpb24gYXQgfjM2LjROLCA4Ni44VyAoR3JlZW5iaWVyICYgUmlkZWd0b3ApIHdlcmUgbm90IHBvc3NpYmxlIHRvIHJlbW92ZVxuYGBgIn0= -->
+<pre class="r"><code>nashville_urban &lt;- nashville_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Dickson&quot;)) 
+
+nashville_urban &lt;- nashville_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Fairview&quot;)) 
+
+nashville_urban &lt;- nashville_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Columbia&quot;)) 
+
+nashville_urban &lt;- nashville_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Spring Hill&quot;)) 
+
+nashville_urban &lt;- nashville_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Mount Pleasant&quot;)) 
+
+nashville_urban &lt;- nashville_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Columbia&quot;)) 
+
+nashville_urban &lt;- nashville_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Barfield&quot;)) 
+
+nashville_urban &lt;- nashville_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Ashland City&quot;)) 
+
+nashville_urban &lt;- nashville_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Pleasant View&quot;)) 
+
+nashville_urban &lt;- nashville_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Lebanon&quot;)) 
+
+nashville_urban &lt;- nashville_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Portland&quot;)) 
+
+nashville_urban &lt;- nashville_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Murfreesboro&quot;)) #big blob
+
+nashville_urban &lt;- nashville_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Woodbury&quot;)) 
+
+nashville_urban &lt;- nashville_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Columbia&quot;)) 
+
+nashville_urban &lt;- nashville_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Carthage&quot;)) 
+
+nashville_urban &lt;- nashville_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Lafayette&quot;)) 
+
+nashville_urban &lt;- nashville_urban |&gt;
+  filter (!str_detect(NAME10, &quot;Springfield&quot;)) 
+
+nashville_urban &lt;- nashville_urban |&gt;
+  filter (!str_detect(NAME10, &quot;White House&quot;))  # ????????
+
+# Was unable to complete this within one filter line of code.
+
+# areas that connect by simply a line were also removed to ensure the h3 hashes worked more efficiently
+
+# the location at ~36.4N, 86.8W (Greenbier &amp; Ridegtop) were not possible to remove</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Verify:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90KCkgK1xuICBnZW9tX3NmKGRhdGEgPSBuYXNodmlsbGVfY2JzYSxcbiAgICAgICAgICBmaWxsID0gXCJsaWdodGdyYXlcIikgK1xuICBnZW9tX3NmKGRhdGEgPSBuYXNodmlsbGVfdXJiYW4sXG4gICAgICAgICAgY29sb3IgPSBcImJsdWVcIixcbiAgICAgICAgICBmaWxsID0gTkEpICtcbiAgdGhlbWVfbWluaW1hbCgpXG5gYGAifQ== -->
+<pre class="r"><code>ggplot() +
+  geom_sf(data = nashville_cbsa,
+          fill = &quot;lightgray&quot;) +
+  geom_sf(data = nashville_urban,
+          color = &quot;blue&quot;,
+          fill = NA) +
+  theme_minimal()</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+</div>
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkNpdHkgRGF0YSINCm91dHB1dDogaHRtbF9ub3RlYm9vaw0KLS0tDQoNCiMjIFNlbGVjdGVkIENpdGllcw0KDQpUaGUgZm9sbG93aW5nIGNpdGllcycgZGF0YXMgd2lsbCBiZSB1c2VkIGZvciB0aGUgRm9ydHJlc3MgU3VidXJiaWEgcHJvamVjdDoNCg0KLSBQaG9lbml4LCBBcml6b25hIChtZXRyb3BvbGl0YW4gcG9wdWxhdGlvbiA9IH41LjEgbWlsbGlvbikgW3BhcnQgMSBkb25lXQ0KLSBUYW1wYSwgRmxvcmlkYSAobWV0cm9wb2xpdGFuIHBvcHVsYXRpb24gPSB+KSBbcGFydCAxIGRvbmVdDQotIEF0bGFudGEsIEdlb3JnaWEgKG1ldHJvcG9saXRhbiBwb3B1bGF0aW9uID0gfjYuMiBtaWxsaW9uKSBbTk9UIGRvbmVdDQotIE5hc2h2aWxsZSwgVGVubmVzc2VlIChtZXRyb3BvbGl0YW4gcG9wdWxhdGlvbiA9IH4yLjEgbWlsbGlvbikgW3BhcnQgMSBkb25lXQ0KLSBIb3VzdG9uLCBUZXhhcyAobWV0cm9wb2xpdGFuIHBvcHVsYXRpb24gPSB+Ni44IG1pbGxpb24pIFtwYXJ0IDEgZG9uZV0NCg0KVGhlc2Ugc2VsZWN0ZWQgY2l0aWVzOg0KDQotIEFyZSBhbGwgbG9jYXRlZCBpbiB0aGUgU3VuIEJlbHQgb2YgdGhlIFVuaXRlZCBTdGF0ZXMuDQotIEFsbCBoYXZlIG1ldHJvcG9saXRhbiBwb3B1bGF0aW9ucyBvZiA+MiBtaWxsaW9uIHBlb3BsZSBhcyBvZiAyMDI0Lg0KLSBBbGwgaGF2ZSBleHBlcmllbmNlZCBzaWduaWZpY2FudCB1cmJhbiBzcHJhd2wgaW4gdGhlIGxhc3QgZmV3IGRlY2FkZXMuDQoNClRoZSBkYXRhIChzdHJlZXRzIGFuZCBvdGhlciBhbWVuaXRpZXMpIGZvciB0aGVzZSBjaXRpZXMgd2lsbCBiZSBkb3dubG9hZGVkIGFuZCBzYXZlZCB0byB0aGUgYGZvcnRyZXNzLXN1YnVyYmlhL2RhdGEtcmF3YCBmb2xkZXIuIFRoZSBjaHVua3Mgb2YgY29kZSBmb3IgcnVubmluZyB0aGlzIGRhdGEgd2lsbCBiZSBiZWxvdyBidXQgaGlkZGVuIGluIC5odG1sIHZpZXcuIFRvIGFjY2VzcyB0aGUgY29kZSwgb3BlbiB0aGUgYENpdHkgRGF0YS5SbWRgIGFuZCBpbmRpdmlkdWFsIGNpdHkgZmlsZXMuDQoNCg==</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlJlbW92ZWQgU2VjdGlvbnMiDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQpUaGlzIG5vdGVib29rIHdpbGwgY29udGFpbiBzZWN0aW9ucyByZW1vdmVkIGZyb20gdGhlIGNpdHkgZGF0YSBub3RlYm9va3MgZm91bmQgaW4gYGZvcnRyZXNzLXN1YnVyYmlhL2RhdGFgLiBUaGV5IGFyZSBzYXZlZCBoZXJlIGluIGNhc2UgdGhleSBjYW4gYmUgdXNlZCBpbiB0aGUgZnV0dXJlIGlmL3doZW4gZGVlbWVkIG5lY2Vzc2FyeS4NCg0KIyBQcmV2aW91cyBDb2RlIGZvciBSZW1vdmluZyBBcmVhcyBEaXNjb25uZWN0ZWQgZnJvbSB0aGUgQ29yZSBSZWdpb25zIG9mIHRoZSBDQlNBczoNCg0KIyMgUGhvZW5peCwgQXJpem9uYQ0KDQpOb3RpY2UgdGhhdCB0aGVyZSBpcyBhIGJpZyB1cmJhbiBhcmVhIHRoYXQgaXMgbW9zdGx5IG91dHNpZGUgb2YgdGhlIFBob2VuaXggQ0JTQSAoVHVjc29uKS4gVGhpcyB3aWxsIG5lZWQgdG8gYmUgcmVtb3ZlZC4NCg0KYGBge3J9DQpwaG9lbml4X3VyYmFuIDwtIHBob2VuaXhfdXJiYW4gfD4NCiAgZmlsdGVyKCFzdHJfZGV0ZWN0KE5BTUUxMCwgIlR1Y3NvbiIpKQ0KYGBgDQoNClZlcmlmeToNCg0KYGBge3J9DQpnZ3Bsb3QoKSArDQogIGdlb21fc2YoZGF0YSA9IHBob2VuaXhfY2JzYSwNCiAgICAgICAgICBmaWxsID0gImxpZ2h0Z3JheSIpICsNCiAgZ2VvbV9zZihkYXRhID0gcGhvZW5peF91cmJhbiwNCiAgICAgICAgICBjb2xvciA9ICJibHVlIiwNCiAgICAgICAgICBmaWxsID0gTkEpICsNCiAgdGhlbWVfbWluaW1hbCgpDQpgYGANCg0KIyMgSG91c3RvbiwgVGV4YXMNCg0KTm90aWNlIHRoYXQgdGhlcmUgaXMgYSBzbWFsbCB1cmJhbiBhcmVhIHRoYXQgaXMgc291dGggb2YgdGhlIEhvdXN0b24gQ0JTQSAoTGFrZSBKYWNrc29uKSwgYW5kIHNtYWxsIGxvY2F0aW9ucyB3ZXN0IG9mIEhvdXN0b24gKFByYWlyaWUgVmlldywgUGluZSBJc2xhbmQsIEhlbXBzdGVhZCkuIFRoaXMgd2lsbCBuZWVkIHRvIGJlIHJlbW92ZWQuDQoNCmBgYHtyfQ0KaG91c3Rvbl91cmJhbiA8LSBob3VzdG9uX3VyYmFuIHw+DQogIGZpbHRlciAoIXN0cl9kZXRlY3QoTkFNRTEwLCAiTGFrZSBKYWNrc29uIikpIA0KDQpob3VzdG9uX3VyYmFuIDwtIGhvdXN0b25fdXJiYW4gfD4NCiAgZmlsdGVyICghc3RyX2RldGVjdChOQU1FMTAsICJQcmFpcmllIFZpZXciKSkgDQoNCmhvdXN0b25fdXJiYW4gPC0gaG91c3Rvbl91cmJhbiB8Pg0KICBmaWx0ZXIgKCFzdHJfZGV0ZWN0KE5BTUUxMCwgIlBpbmUgSXNsYW5kIikpIA0KDQpob3VzdG9uX3VyYmFuIDwtIGhvdXN0b25fdXJiYW4gfD4NCiAgZmlsdGVyICghc3RyX2RldGVjdChOQU1FMTAsICJIZW1wc3RlYWQiKSkgDQoNCiMgV2FzIHVuYWJsZSB0byBjb21wbGV0ZSB0aGlzIHdpdGhpbiBvbmUgZmlsdGVyIGxpbmUgb2YgY29kZS4NCmBgYA0KDQpWZXJpZnk6DQoNCmBgYHtyfQ0KZ2dwbG90KCkgKw0KICBnZW9tX3NmKGRhdGEgPSBob3VzdG9uX2Nic2EsDQogICAgICAgICAgZmlsbCA9ICJsaWdodGdyYXkiKSArDQogIGdlb21fc2YoZGF0YSA9IGhvdXN0b25fdXJiYW4sDQogICAgICAgICAgY29sb3IgPSAiYmx1ZSIsDQogICAgICAgICAgZmlsbCA9IE5BKSArDQogIHRoZW1lX21pbmltYWwoKQ0KYGBgDQoNCiMjIEF0bGFudGEsIEdlb3JnaWE6DQoNCk5vdGljZSB0aGF0IHRoZXJlIGFyZSBhIGZldyB1cmJhbiBhcmVhcyBvdXRzaWRlIG9mIEF0bGFudGEncyBib3VuZGFyaWVzLiBUaGVzZSB3aWxsIG5lZWQgdG8gYmUgcmVtb3ZlZC4NCg0KYGBge3J9DQphdGxhbnRhX3VyYmFuIDwtIGF0bGFudGFfdXJiYW4gfD4NCiAgZmlsdGVyICghc3RyX2RldGVjdChOQU1FMTAsICJDYWxob3VuIikpIA0KDQphdGxhbnRhX3VyYmFuIDwtIGF0bGFudGFfdXJiYW4gfD4NCiAgZmlsdGVyICghc3RyX2RldGVjdChOQU1FMTAsICJDYXJ0ZXJzdmlsbGUiKSkgDQoNCmF0bGFudGFfdXJiYW4gPC0gYXRsYW50YV91cmJhbiB8Pg0KICBmaWx0ZXIgKCFzdHJfZGV0ZWN0KE5BTUUxMCwgIkphc3BlciIpKSANCg0KYXRsYW50YV91cmJhbiA8LSBhdGxhbnRhX3VyYmFuIHw+DQogIGZpbHRlciAoIXN0cl9kZXRlY3QoTkFNRTEwLCAiTmVsc29uIikpIA0KDQphdGxhbnRhX3VyYmFuIDwtIGF0bGFudGFfdXJiYW4gfD4NCiAgZmlsdGVyICghc3RyX2RldGVjdChOQU1FMTAsICJZb3JrdmlsbGUiKSkgDQoNCmF0bGFudGFfdXJiYW4gPC0gYXRsYW50YV91cmJhbiB8Pg0KICBmaWx0ZXIgKCFzdHJfZGV0ZWN0KE5BTUUxMCwgIkNhcnJvbGx0b24iKSkgDQoNCmF0bGFudGFfdXJiYW4gPC0gYXRsYW50YV91cmJhbiB8Pg0KICBmaWx0ZXIgKCFzdHJfZGV0ZWN0KE5BTUUxMCwgIkJyZW1lbiIpKSANCg0KYXRsYW50YV91cmJhbiA8LSBhdGxhbnRhX3VyYmFuIHw+DQogIGZpbHRlciAoIXN0cl9kZXRlY3QoTkFNRTEwLCAiR3JhbnR2aWxsZSIpKSANCg0KYXRsYW50YV91cmJhbiA8LSBhdGxhbnRhX3VyYmFuIHw+DQogIGZpbHRlciAoIXN0cl9kZXRlY3QoTkFNRTEwLCAiU2hpbG9oIikpIA0KDQphdGxhbnRhX3VyYmFuIDwtIGF0bGFudGFfdXJiYW4gfD4NCiAgZmlsdGVyICghc3RyX2RldGVjdChOQU1FMTAsICJNYW5jaGVzdGVyIikpIA0KDQphdGxhbnRhX3VyYmFuIDwtIGF0bGFudGFfdXJiYW4gfD4NCiAgZmlsdGVyICghc3RyX2RldGVjdChOQU1FMTAsICJCYXJuZXN2aWxsZSIpKSANCg0KYXRsYW50YV91cmJhbiA8LSBhdGxhbnRhX3VyYmFuIHw+DQogIGZpbHRlciAoIXN0cl9kZXRlY3QoTkFNRTEwLCAiSmFja3NvbiIpKSANCg0KYXRsYW50YV91cmJhbiA8LSBhdGxhbnRhX3VyYmFuIHw+DQogIGZpbHRlciAoIXN0cl9kZXRlY3QoTkFNRTEwLCAiTW9udGljZWxsbyIpKSANCg0KYXRsYW50YV91cmJhbiA8LSBhdGxhbnRhX3VyYmFuIHw+DQogIGZpbHRlciAoIXN0cl9kZXRlY3QoTkFNRTEwLCAiU29jaWFsIENpcmNsZSIpKQ0KDQphdGxhbnRhX3VyYmFuIDwtIGF0bGFudGFfdXJiYW4gfD4NCiAgZmlsdGVyICghc3RyX2RldGVjdChOQU1FMTAsICJNYWRpc29uIikpIA0KDQojIFdhcyB1bmFibGUgdG8gY29tcGxldGUgdGhpcyB3aXRoaW4gb25lIGZpbHRlciBsaW5lIG9mIGNvZGUuDQpgYGANCg0KVmVyaWZ5Og0KDQpgYGB7cn0NCmdncGxvdCgpICsNCiAgZ2VvbV9zZihkYXRhID0gYXRsYW50YV9jYnNhLA0KICAgICAgICAgIGZpbGwgPSAibGlnaHRncmF5IikgKw0KICBnZW9tX3NmKGRhdGEgPSBhdGxhbnRhX3VyYmFuLA0KICAgICAgICAgIGNvbG9yID0gImJsdWUiLA0KICAgICAgICAgIGZpbGwgPSBOQSkgKw0KICB0aGVtZV9taW5pbWFsKCkNCmBgYA0KDQojIyBOYXNodmlsbGUsIFRlbm5lc3NlZToNCg0KVGhlIHNtYWxsIGFyZWFzIG91dHNpZGUgb2YgdGhlIGNvcmUgTmFzaHZpbGxlIGFyZWEgaGF2ZSB0byBiZSByZW1vdmVkLiANCg0KYGBge3J9DQpuYXNodmlsbGVfdXJiYW4gPC0gbmFzaHZpbGxlX3VyYmFuIHw+DQogIGZpbHRlciAoIXN0cl9kZXRlY3QoTkFNRTEwLCAiRGlja3NvbiIpKSANCg0KbmFzaHZpbGxlX3VyYmFuIDwtIG5hc2h2aWxsZV91cmJhbiB8Pg0KICBmaWx0ZXIgKCFzdHJfZGV0ZWN0KE5BTUUxMCwgIkZhaXJ2aWV3IikpIA0KDQpuYXNodmlsbGVfdXJiYW4gPC0gbmFzaHZpbGxlX3VyYmFuIHw+DQogIGZpbHRlciAoIXN0cl9kZXRlY3QoTkFNRTEwLCAiQ29sdW1iaWEiKSkgDQoNCm5hc2h2aWxsZV91cmJhbiA8LSBuYXNodmlsbGVfdXJiYW4gfD4NCiAgZmlsdGVyICghc3RyX2RldGVjdChOQU1FMTAsICJTcHJpbmcgSGlsbCIpKSANCg0KbmFzaHZpbGxlX3VyYmFuIDwtIG5hc2h2aWxsZV91cmJhbiB8Pg0KICBmaWx0ZXIgKCFzdHJfZGV0ZWN0KE5BTUUxMCwgIk1vdW50IFBsZWFzYW50IikpIA0KDQpuYXNodmlsbGVfdXJiYW4gPC0gbmFzaHZpbGxlX3VyYmFuIHw+DQogIGZpbHRlciAoIXN0cl9kZXRlY3QoTkFNRTEwLCAiQ29sdW1iaWEiKSkgDQoNCm5hc2h2aWxsZV91cmJhbiA8LSBuYXNodmlsbGVfdXJiYW4gfD4NCiAgZmlsdGVyICghc3RyX2RldGVjdChOQU1FMTAsICJCYXJmaWVsZCIpKSANCg0KbmFzaHZpbGxlX3VyYmFuIDwtIG5hc2h2aWxsZV91cmJhbiB8Pg0KICBmaWx0ZXIgKCFzdHJfZGV0ZWN0KE5BTUUxMCwgIkFzaGxhbmQgQ2l0eSIpKSANCg0KbmFzaHZpbGxlX3VyYmFuIDwtIG5hc2h2aWxsZV91cmJhbiB8Pg0KICBmaWx0ZXIgKCFzdHJfZGV0ZWN0KE5BTUUxMCwgIlBsZWFzYW50IFZpZXciKSkgDQoNCm5hc2h2aWxsZV91cmJhbiA8LSBuYXNodmlsbGVfdXJiYW4gfD4NCiAgZmlsdGVyICghc3RyX2RldGVjdChOQU1FMTAsICJMZWJhbm9uIikpIA0KDQpuYXNodmlsbGVfdXJiYW4gPC0gbmFzaHZpbGxlX3VyYmFuIHw+DQogIGZpbHRlciAoIXN0cl9kZXRlY3QoTkFNRTEwLCAiUG9ydGxhbmQiKSkgDQoNCm5hc2h2aWxsZV91cmJhbiA8LSBuYXNodmlsbGVfdXJiYW4gfD4NCiAgZmlsdGVyICghc3RyX2RldGVjdChOQU1FMTAsICJNdXJmcmVlc2Jvcm8iKSkgI2JpZyBibG9iDQoNCm5hc2h2aWxsZV91cmJhbiA8LSBuYXNodmlsbGVfdXJiYW4gfD4NCiAgZmlsdGVyICghc3RyX2RldGVjdChOQU1FMTAsICJXb29kYnVyeSIpKSANCg0KbmFzaHZpbGxlX3VyYmFuIDwtIG5hc2h2aWxsZV91cmJhbiB8Pg0KICBmaWx0ZXIgKCFzdHJfZGV0ZWN0KE5BTUUxMCwgIkNvbHVtYmlhIikpIA0KDQpuYXNodmlsbGVfdXJiYW4gPC0gbmFzaHZpbGxlX3VyYmFuIHw+DQogIGZpbHRlciAoIXN0cl9kZXRlY3QoTkFNRTEwLCAiQ2FydGhhZ2UiKSkgDQoNCm5hc2h2aWxsZV91cmJhbiA8LSBuYXNodmlsbGVfdXJiYW4gfD4NCiAgZmlsdGVyICghc3RyX2RldGVjdChOQU1FMTAsICJMYWZheWV0dGUiKSkgDQoNCm5hc2h2aWxsZV91cmJhbiA8LSBuYXNodmlsbGVfdXJiYW4gfD4NCiAgZmlsdGVyICghc3RyX2RldGVjdChOQU1FMTAsICJTcHJpbmdmaWVsZCIpKSANCg0KbmFzaHZpbGxlX3VyYmFuIDwtIG5hc2h2aWxsZV91cmJhbiB8Pg0KICBmaWx0ZXIgKCFzdHJfZGV0ZWN0KE5BTUUxMCwgIldoaXRlIEhvdXNlIikpICAjID8/Pz8/Pz8/DQoNCiMgV2FzIHVuYWJsZSB0byBjb21wbGV0ZSB0aGlzIHdpdGhpbiBvbmUgZmlsdGVyIGxpbmUgb2YgY29kZS4NCg0KIyBhcmVhcyB0aGF0IGNvbm5lY3QgYnkgc2ltcGx5IGEgbGluZSB3ZXJlIGFsc28gcmVtb3ZlZCB0byBlbnN1cmUgdGhlIGgzIGhhc2hlcyB3b3JrZWQgbW9yZSBlZmZpY2llbnRseQ0KDQojIHRoZSBsb2NhdGlvbiBhdCB+MzYuNE4sIDg2LjhXIChHcmVlbmJpZXIgJiBSaWRlZ3RvcCkgd2VyZSBub3QgcG9zc2libGUgdG8gcmVtb3ZlDQpgYGANCg0KVmVyaWZ5Og0KDQpgYGB7cn0NCmdncGxvdCgpICsNCiAgZ2VvbV9zZihkYXRhID0gbmFzaHZpbGxlX2Nic2EsDQogICAgICAgICAgZmlsbCA9ICJsaWdodGdyYXkiKSArDQogIGdlb21fc2YoZGF0YSA9IG5hc2h2aWxsZV91cmJhbiwNCiAgICAgICAgICBjb2xvciA9ICJibHVlIiwNCiAgICAgICAgICBmaWxsID0gTkEpICsNCiAgdGhlbWVfbWluaW1hbCgpDQpgYGA=</div>
 
 
 
@@ -1830,7 +2028,7 @@ $(document).ready(function () {
 <!-- code folding -->
 <script>
 $(document).ready(function () {
-  window.initializeSourceEmbed("City Data.Rmd");
+  window.initializeSourceEmbed("Removed Sections.Rmd");
   window.initializeCodeFolding("show" === "show");
 });
 </script>
